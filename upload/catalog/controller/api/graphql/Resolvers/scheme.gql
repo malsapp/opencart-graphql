@@ -1,0 +1,1188 @@
+type ProductType {
+  product_id:ID
+  name:String
+  description:String
+  meta_title:String
+  meta_description:String
+  meta_keyword:String
+  tag:String
+  model:String
+  sku:String
+  upc:String
+  ean:String
+  jan:String
+  isbn:String
+  mpn:String
+  location:String
+  quantity:String
+  stock_status:String
+  image:String
+  manufacturer:ManufacturerType
+  price:String
+  special:String
+  formatted_price:String
+  formatted_special:String
+  reward:String
+  points:String
+  tax_class_id:ID
+  date_available:String
+  weight:String
+  weight_class_id:ID
+  length:Float
+  width:Float
+  height:Float
+  length_class_id:ID
+  subtract:String
+  rating:Float
+  review_count:Int
+  minimum:String
+  sort_order:String
+  status:String
+  date_added:String
+  date_modified:String
+  viewed:String
+  wishlist:Boolean
+  categories:[CategoryType] #getCategories foreach push category
+  attributes(language_id:Int):[ProductAttributeGroupType]
+  options:[ProductOptionType]
+  discounts:[ProductDiscountIdType]
+  images:[ProductImageType]
+  layout_id:Int
+}
+
+type ProductAttributeType {
+  attribute_id:ID
+  name:String
+  text:String
+}
+
+type ProductAttributeGroupType {
+  attribute_group_id:ID
+  name:String
+  attribute: [ProductAttributeType]
+}
+
+type ProductOptionType {
+  product_option_id:ID
+  product_option_value:[productOptionValueType]
+  option_id:ID
+  name:String
+  type:String
+  value:String
+  required:Int
+}
+
+type productOptionValueType {
+  product_option_value_id:ID
+  option_value_id:ID
+  name:String
+  image:String
+  quantity:Int
+  subtract:Int
+  price:Float
+  price_prefix:String
+  weight:Float
+  weight_prefix:String
+}
+
+type ProductDiscountIdType{
+  product_discount_id:ID
+  Product:ProductType #product_id
+  CustomerGroup:CustomerGroupType #customer_group_id
+  quantity:Int
+  priority:Int
+  price:Float
+  date_start:String
+  date_end:String
+}
+
+type ProductImageType {
+  product_image_id:ID
+  product:ProductType #product_id
+  image:String
+  sort_order:Int
+}
+
+type ReviewType {
+  review_id:ID
+  author:String
+  rating:String
+  text:String
+}
+
+input ReviewInput {
+  name:String!
+  rating:Int!
+  text:String!
+}
+
+type CategoryType {
+  category_id:ID
+  name:String
+  image:String
+  top:Int
+  column:Int
+  status:Int
+  description:String
+  date_added:String
+  date_modified:String
+  language:LanguageType
+  meta_title:String
+  meta_description:String
+  meta_keyword:String
+  store:StoreType
+  parent:CategoryType
+  layout_id:Int
+  products_count:Int
+  products(
+    limit:Int
+    start:Int
+    sort:String
+    order:String
+  ):[ProductType]
+  categories:[CategoryType]
+  filters:[CategoryFilterGroupType]
+}
+
+type CategoryFilterGroupType {
+  filter_group_id:ID
+  name:String
+  filter:[CategoryFilterDataType]
+}
+
+type CategoryFilterDataType {
+  filter_id:ID
+  name:String
+}
+
+type ManufacturerType {
+  manufacturer_id:ID
+  name:String
+  image:String
+  sort_order:Int
+  products:[ProductType]
+  store:StoreType
+}
+
+type InformationType {
+  information_id:ID
+  bottom:Int
+  sort_order:Int
+  status:Int
+  language:LanguageType
+  title:String
+  description:String
+  meta_title:String
+  meta_description:String
+  meta_keyword:String
+  store:StoreType
+  layout_id:Int
+}
+
+type SessionType {
+  id:ID!
+}
+
+input AddressInput {
+  firstname:String!
+  lastname:String!
+  company:String!
+  address_1:String!
+  address_2:String!
+  postcode:String!
+  city:String!
+  zone_id:ID!
+  country_id:ID!
+  custom_field:String!
+  default:Boolean
+}
+
+type AddressType {
+  address_id:ID
+  firstname:String
+  lastname:String
+  company:String
+  address_1:String
+  address_2:String
+  postcode:String
+  city:String
+  zone:ZoneType         #zone_id
+  country:CountryType   #country_id
+  custom_field:String
+}
+
+type MethodExtensionType {
+  title:String
+  quote:MethodQuoteType
+  sort_order:String
+  error:String
+}
+
+type MethodQuoteType {
+  code:String
+  title:String
+  cost:Float
+  tax_class_id:ID
+  text:String
+}
+
+type CustomerGroupType {
+  customer_group_id:ID
+  approval:Int
+  name:String
+  description:String
+  sort_order: Int
+  language:LanguageType #language_id
+}
+
+type DownloadType {
+  download_id:ID #multiple
+  order_id:ID #multiple
+  date_added:String #multiple
+  name:String #multiple
+  filename:String! #single/multiple
+  mask:String #single
+}
+
+type LanguageType {
+  language_id:ID
+  name:String
+  code:String
+  locale:String
+  image:String
+  directory:String
+  sort_order:Int
+  status:Int
+}
+
+type CountryType {
+  country_id:ID
+  name:String
+  iso_code_2:String
+  iso_code_3:String
+  address_format:String
+  postcode_required:String
+  status:Int
+}
+
+type CurrencyType {
+  currency_id:ID
+  title:String
+  code:String
+  symbol_left:String
+  symbol_right:String
+  decimal_place:Int
+  value:Float
+  status:Int
+  date_modified:String
+}
+
+type ZoneType {
+  zone_id:ID
+  country:CountryType #country_id
+  name:String
+  code:String
+  status:Int
+}
+
+type RewardType{
+  customer_reward_id:ID
+  customer:CustomerType  #customer_id
+  order_id:Int
+  description:String
+  points:Int
+  date_added:String
+}
+
+type TransactionType{
+  customer_transaction_id:ID
+  customer:CustomerType  #customer_id
+  order_id:Int
+  description:String
+  amount:Float
+  date_added:String
+}
+
+type BannerType {
+  banner_id:ID
+  name:String
+  status:Int
+  banner_image_id:ID
+  language_id:ID
+  title:String
+  link:String
+  image:String
+}
+
+input AccountActivityInput{
+  account_id:Int!
+  data:[String]
+}
+
+input AffiliateActivityInput{
+  affiliate_id:Int!
+  data:[String]
+}
+
+input OrderInput {
+  invoice_prefix:String
+  store_id:ID
+  store_name:String
+  store_url:String
+  customer_id:ID
+  customer_group_id:ID
+  firstname:String!
+  lastname:String!
+  email:String!
+  telephone:String!
+  fax:String!
+  custom_field:String
+  payment_firstname:String!
+  payment_lastname:String!
+  payment_company:String!
+  payment_address_1:String!
+  payment_address_2:String!
+  payment_city:String!
+  payment_postcode:String!
+  payment_country:String!
+  payment_country_id:ID!
+  payment_zone:String!
+  payment_zone_id:ID!
+  payment_address_format:String!
+  payment_custom_field:String
+  payment_method:String!
+  payment_code:String!
+  shipping_firstname:String!
+  shipping_lastname:String!
+  shipping_company:String!
+  shipping_address_1:String!
+  shipping_address_2:String!
+  shipping_city:String!
+  shipping_postcode:String!
+  shipping_country:String!
+  shipping_country_id:ID!
+  shipping_zone:String!
+  shipping_zone_id:ID!
+  shipping_address_format:String!
+  shipping_custom_field:String
+  shipping_method:String!
+  shipping_code:String!
+  comment:String
+  total:Float
+  affiliate_id:ID
+  commission:Float
+  marketing_id:ID
+  tracking:String
+  language_id:ID
+  currency_id:ID
+  currency_code:Float
+  currency_value:String
+  ip:String
+  forwarded_ip:String
+  user_agent:String
+  accept_language:String
+  products:[OrderProductInput]
+}
+
+input OrderProductInput {
+  product_id:ID!
+  name:String!
+  model:String!
+  quantity:Int!
+  price:Float!
+  total:Float!
+  tax:Float!
+  reward:Int!
+  option:[OrderProductOptionInput]
+}
+
+type OrderProductType {
+  order_product_id:ID!
+  order_id:ID!
+  product_id:ID!
+  name:String!
+  model:String!
+  quantity:Int!
+  price:Float!
+  total:Float!
+  tax:Float!
+  reward:Int!
+}
+
+input OrderProductOptionInput {
+  product_option_id:ID!
+  product_option_value_id:ID!
+  name:String!
+  value:String!
+  type:String!
+}
+
+input OrderVoucherInput {
+  description:String!
+  code:String!
+  from_name:String!
+  from_email:String!
+  to_name:String!
+  to_email:String!
+  voucher_theme_id:String!
+  message:String!
+  amount:Float!
+}
+
+type VoucherType {
+  description:String
+  code:String
+  from_name:String
+  from_email:String
+  to_name:String
+  to_email:String
+  voucher_theme_id:String
+  message:String
+  amount:Float
+}
+
+type TotalsType {
+  code:String!
+  title:String!
+  value:Float!
+  sort_order:Int!
+}
+
+input OrderTotalsInput {
+  code:String!
+  title:String!
+  value:Float!
+  sort_order:Int!
+}
+
+type OrderType {
+  order_id:ID
+  invoice_no:Int
+  invoice_prefix:String
+  store:StoreType
+  products:[OrderProductType]
+  store_name:String
+  store_url:String
+  customer_id:ID
+  firstname:String
+  lastname:String
+  email:String
+  telephone:String
+  fax:String
+  custom_field:String
+  payment_firstname:String
+  payment_lastname:String
+  payment_company:String
+  payment_address_1:String
+  payment_address_2:String
+  payment_postcode:String
+  payment_city:String
+  paymentZone:ZoneType        #payment_zone_id, payment_zone, payment_zone_code
+  paymentCountry:CountryType  #payment_country_id, payment_country, payment_iso_code_2,
+                              #payment_iso_code_3, payment_address_format
+  payment_custom_field:String
+  payment_method:String
+  payment_code:String
+  shipping_firstname:String
+  shipping_lastname:String
+  shipping_company:String
+  shipping_address_1:String
+  shipping_address_2:String
+  shipping_postcode:String
+  shipping_city:String
+  shippingZone:ZoneType       #shipping_*
+  shippingCountry:CountryType #shipping_*
+  shipping_custom_field:String
+  shipping_method:String
+  shipping_code:String
+  comment:String
+  total:String
+  order_status_id:String
+  order_status:String
+  affiliate_id:ID
+  commission:String
+  language:LanguageType #language_id, language_code
+  currency:CurrencyType #currency_id, currency_code, currency_value
+  ip:String
+  forwarded_ip:String
+  user_agent:String
+  accept_language:String
+  date_added:String
+  date_modified:String
+}
+
+input NewCustomSearchInput {
+  customer_id:ID!
+  keyword:String!
+  category_id:ID!
+  sub_category:ID!
+  description:Int!
+  products:Int!
+  ip:String!
+}
+
+type CustomFieldType {
+  custom_field_id:ID
+  custom_field_value:String
+  name:String
+  type:String
+  value:String
+  validation:String
+  location:String
+  required:Boolean
+  sort_order:Int
+}
+
+type CartItemType {
+  cart_id:ID
+  product_id:ID
+  name:String
+  model:String
+  shipping:String
+  image:String
+  option:[ProductOptionType]
+  download:[DownloadType]
+  quantity:Int
+  minimum:Int
+  subtract:Int
+  stock:Int
+  price:Float
+  total:Float
+  reward:Int
+  points:Int
+  tax_class_id:ID
+  weight:Float
+  weight_class_id:ID
+  length:Float
+  width:Float
+  height:Float
+  length_class_id:ID
+  recurring:[RecurringType]
+}
+
+input ReturnInput{
+   order_id:Int!
+   firstname:String!
+   lastname:String!
+   email:String!
+   telephone:String!
+
+   product:String #not obvious
+
+   model:String!
+   quantity:Int!
+   opened:Int!
+   return_reason_id:Int!
+   comment:String!
+   date_ordered:String!
+}
+
+type ReturnType{
+  return_id:ID
+  order:OrderType
+  firstname:String
+  firstname:String
+  email:String
+  telephone:String
+  product:String
+  model:String
+  quantity:Int
+  opened:Boolean
+  reason:Int
+  action:Int
+  status:Int
+  comment:String
+  date_ordered:String
+  date_added:String
+  date_modified:String
+}
+
+type ReturnHistoryType {
+  comment:String
+  date_added:String
+  status:String
+}
+
+type CustomerType {
+  customer_id:ID!
+  customer_group:CustomerGroupType #customer_group_id
+  store:StoreType #store_id
+  language:LanguageType #language_id
+  firstname:String
+  lastname:String
+  email:String
+  telephone:String
+  fax:String
+  password:String
+  salt:String
+  cart:String
+  wishlist:String
+  newsletter:Boolean
+  address_id:Int
+  custom_field:String
+  ip:String
+  status:Boolean
+  approved:Boolean
+  safe:Boolean
+  token:String
+  code:String
+  date_added:String
+}
+
+input CustomerInput{
+  customer_group_id:Int!
+  firstname:String!
+  lastname:String!
+  email:String!
+  telephone:String!
+  address_1:String!
+  address_2:String!
+  city:String!
+  country_id:ID!
+  zone_id:ID!
+  password:String!
+  confirm:String!
+  agree:Boolean!
+  fax:String!
+  company:String!
+  postcode:String!
+}
+
+type RecurringType {
+  recurring_id:ID
+  name:String
+  frequency:Float
+  price:Float
+  cycle:String
+  duration:Float
+  trial:Boolean
+  trial_frequency:Float
+  trial_price:Float
+  trial_cycle:Float
+  trial_duration:Float
+}
+
+input CartItemInput {
+  product_id:ID!
+  quantity:Int
+  options:[CartItemOptionInput]
+  recurring_id:ID
+}
+
+input CartItemOptionInput {
+  option_id:ID!
+  value:String!
+}
+
+type CartType {
+  weight:Float
+  tax:Float
+  total:Float
+  subtotal:Float
+  coupon_discount:Float
+  coupon_code:ID
+  has_stock:Boolean
+  has_shipping:Boolean
+  has_download:Boolean
+  totals:[TotalsType]
+  items:[CartItemType]
+}
+
+type StoreType {
+  store_id:ID
+  name:String
+  url:String
+  ssl:String
+}
+
+type CountType {
+  count:Int
+}
+
+input CustomerEdit {
+  firstname:String!
+  lastname:String!
+  email:String!
+  telephone:String!
+  fax:String!
+  custom_field:String
+}
+
+type IPType {
+  customer_ip_id:ID
+  customer_id:String
+  ip:String
+  date_added:String
+}
+
+type CustomerLoginType {
+  customer_login_id:ID
+  email:String
+  ip:String
+  total:Int
+  date_added:String
+  date_modified:String
+}
+
+#final schema delimiter#
+
+type DiscountType {
+  quantity:String
+  price_execluding_tax:String
+  price:String
+  price_formatted:String
+}
+
+type ShippingQuoteType {
+  title:String!
+  code:String!
+  cost:String!
+  tax_class_id:String!
+  text:String!
+}
+
+type CouponType {
+  id:ID
+  name:String
+  code:String
+  discount:Int
+  total:Float
+  categories:[CategoryType]
+  products:[ProductType]
+  date_start:String
+  date_end:String
+  logged:Boolean
+  shipping:Boolean
+  uses_total:Int
+  uses_customer:Int
+}
+
+type SearchFilterType {
+  field:String!
+  operand:String
+  logical_operand:String
+  value:String!
+}
+
+type FaqCategoryType {
+  faqcategory_id:ID
+  title:String
+  description:String
+  language_id:Int
+  sort_order:Int
+  status:Boolean
+  store_id:Int
+  layout_id:Int
+  faqs:[FaqType]
+}
+
+type FaqType {
+  faq_id:ID
+  title:String
+  description:String
+  sort_order:Int
+  status:Boolean
+  store_id:Int
+  date_added:String
+  date_modified:String
+  faqcategory_id:Int
+  viewed:Int
+  language_id:Int
+  faqCategory:FaqCategoryType
+}
+
+type PhotoType {
+  photo_id:ID
+  image:String
+  date_added:String
+  status:Boolean
+  description:[PhotoDescriptionType]
+}
+
+type PhotoDescriptionType {
+  title:String
+  description:String
+  short_description:String
+  language_id:Int
+}
+
+type NewsType {
+  news_id:ID
+  title:String
+  description:String
+  short_description:String
+  image:String
+  status:Boolean
+  language_id:Int
+  date_added:String
+}
+
+#Inputs (Kept for future reference)
+input ProductInput {
+  model:String!
+  sku:String!
+  upc:String!
+  ean:String!
+  jan:String!
+  isbn:String!
+  mpn:String!
+  location:String!
+  quantity:Int!
+  minimum:Int!
+  subtract:Int!
+  stock_status_id:Int!
+  date_available:String!
+  manufacturer_id:Int!
+  shipping:Int!
+  price:Float!
+  points:Int!
+  weight:Float!
+  weight_class_id:Int!
+  length:Float!
+  width:Float!
+  height:Float!
+  length_class_id:Int!
+  status:Int!
+  tax_class_id:Int!
+  sort_order:Int!
+  image:String
+  product_attribute:[ProductAttributeInput]
+  product_store:ID
+  product_description:[ProductDescriptionInput]
+  product_option:[ProductOptionInput]
+  product_discount:[ProductDiscountInput]
+  product_special:[ProductSpecialInput]
+  product_image:[ProductImageInput]
+  product_download:[Int]
+  product_category:[Int]
+  product_filter:[Int]
+  product_related:[Int]
+  product_reward:[ProductRewardInput]
+  product_layout:[ProductLayoutInput]
+  keyword:String
+  product_recurring:[ProductRecurringInput]
+}
+
+input ProductDescriptionInput {
+  language_id:Int!
+  product_id:ID
+  name:String!
+  description:String!
+  tag:String!
+  meta_title:String!
+  meta_description:String!
+  meta_keyword:String!
+}
+
+input ProductAttributeInput {
+  attribute_id:ID
+  product_attribute_description:[ProductAttributeDescriptionInput]
+}
+
+input ProductAttributeDescriptionInput {
+  language_id:Int!
+  text:String!
+}
+
+input ProductOptionInput {
+  option_id:ID
+  value:String
+  required:Int
+  product_option_value:[ProductOptionValueInput]
+}
+
+input ProductOptionValueInput {
+  option_id:Int!
+  option_value_id:Int!
+  quantity:Int!
+  subtract:Int!
+  price:Float!
+  price_prefix:Float!
+  points:Int!
+  points_prefix:String!
+  weight:Float!
+  weight_prefix:String!
+}
+
+input ProductDiscountInput {
+  customer_group_id:Int!
+  quantity:Int!
+  priority:Int!
+  price:Float!
+  date_start:String!
+  date_end:String!
+}
+
+input ProductSpecialInput {
+  customer_group_id:Int!
+  priority:Int!
+  price:Float!
+  date_start:String!
+  date_end:String!
+}
+
+input ProductImageInput {
+  image:String!
+  sort_order:Int!
+}
+
+input ProductRewardInput {
+  customer_group_id:Int!
+  points:Int!
+}
+
+input ProductLayoutInput {
+  store_id:Int!
+  layout_id:Int!
+}
+
+input ProductRecurringInput {
+  customer_group_id:Int!
+  recurring_id:Int!
+}
+
+#schema
+
+type RootQueryType {
+  #product queries
+  product (id:ID!):ProductType
+  products (
+    filter_category_id:Int
+    filter_sub_category:Int
+    filter_filter:String
+    filter_name:String#
+    filter_tag:String
+    filter_description:String
+    filter_model:String#-
+    filter_price:String#-
+    filter_quantity:String#-
+    filter_status:String#-
+    filter_image:String#-
+    filter_manufacturer_id:Int
+    sort:String
+    order:String
+    start:Int
+    limit:Int
+  ):[ProductType]
+  compareProducts (ids:[ID]!):[ProductType] #/compare
+  bestsellerProducts (limit:Int):[ProductType] #/bestsellers
+  relatedProducts (id:ID!):[ProductType] #/related
+  latestProducts (limit:Int):[ProductType] #/latest
+  popularProducts (limit:Int):[ProductType]
+  productSpecials (
+    sort:String
+    order:String
+    start:Int
+    limit:Int
+  ):[ProductType]
+
+  #reviews queries
+  reviews (
+    product_id:ID!
+    start:Int
+    limit:Int
+  ): [ReviewType]
+
+  #categories queries
+  categories (parent:Int):[CategoryType]
+  category (
+    id:ID!
+  ):CategoryType
+
+  #manufacturer queries
+  manufacturers:[ManufacturerType]
+  manufacturer (
+    id:ID!
+  ):ManufacturerType
+
+  #information queries
+  informations:[InformationType]
+  information (id:ID!):InformationType
+
+  #get session id
+  session (id:ID):SessionType
+
+  #cart
+  cart:CartType #get all cart items
+
+  #address
+  address (id:ID!):AddressType
+  addresses:[AddressType]
+
+  #customer group
+  customerGroup (id:ID!):CustomerGroupType
+  customerGroups:[CustomerGroupType]
+
+  #download
+  download (id:ID!):DownloadType
+  downloads (start:Int, limit:Int):[DownloadType]
+
+  #language
+  language (id:ID):LanguageType
+  languages:[LanguageType]
+
+  #zone
+  zones (country_id:ID!):[ZoneType]
+  zone (id:ID!):ZoneType
+
+  #contries queries
+  country (id:ID!):CountryType
+  countries:[CountryType]
+
+  #currency
+  currency(code:String):CurrencyType
+  currencies:[CurrencyType]
+
+  banners (layout:String!):[BannerType]
+
+  #reward queries
+  rewards (
+    sort:String
+    order:String
+    start:Int
+    limit:Int
+  ):[RewardType]
+
+  transactions (
+    sort:String
+    order:String
+    start:Int
+    limit:Int
+  ):[TransactionType]
+
+  #wishlist queries
+  wishlist:[ProductType]
+
+  #order
+  order (id:ID!):OrderType #model/checkout
+  orders (start:Int, limit:Int):[OrderType]
+  orderProduct (order_id:ID!, order_product_id:ID!):ProductType
+  orderProducts (order_id:ID!):[ProductType]
+  orderOptions (order_id:ID!, order_product_id:ID!):ProductOptionType
+  orderVouchers (order_id:ID!, order_product_id:ID!):VoucherType
+
+  #custom field
+  getCustomField (id:ID!):CustomFieldType
+  getCustomFields (customer_group_id:ID!):[CustomFieldType]
+
+  #payment addresses query
+  paymentAddress:AddressType
+  shippingAddress:AddressType
+  paymentMethods:[MethodExtensionType]
+  shippingMethods:[MethodExtensionType]
+
+  #return queries
+  return(
+    return_id:Int!
+  ):ReturnType
+
+  returns (
+    start:Int
+    limit:Int
+  ):[ReturnType]
+
+  ReturnHistories (return_id:Int):[ReturnHistoryType]
+
+  #customer queries
+  loggedIn:CustomerType
+  customer (id:ID!):CustomerType
+  customerByEmail (email:String!):CustomerType
+  customerByCode (code:String!):CustomerType
+  customerByToken (token:String!):CustomerType
+  Ips (id:ID!):[IPType]
+  LoginAttempts(email:String!):CustomerLoginType
+
+  # FAQs
+  faqCategory (id:ID!):FaqCategoryType
+  faqCategories:[FaqCategoryType]
+  faq (id:ID!):FaqType
+  faqs:[FaqType]
+
+  # news
+  news (id:ID!):NewsType
+  allnews:[NewsType]
+}
+
+type MutationType {
+  addReview (
+    product_id:ID!
+    input:ReviewInput!
+  ):ID
+
+  #address mutations
+  addAddress (input:AddressInput):ID
+  editAddress (address_id:ID, input:AddressInput):Boolean
+  deleteAddress (address_id:ID):Boolean
+
+  #order operations
+  addOrder (input:OrderInput!):ID
+  editOrder (order_id:ID!, input:OrderInput!):Boolean
+  deleteOrder (order_id:ID!):Boolean
+
+  #custom search
+  addNewCustomSearch (input:NewCustomSearchInput):Boolean
+
+  #cart operations
+  addItemToCart (input:CartItemInput!):CartType
+  addItemsToCart (input:[CartItemInput]!):CartType
+  updateCartItem (cart_id:ID!, quantity:Int!):Boolean
+  deleteCartItem (cart_id:ID!):Boolean
+  emptyCart:Boolean
+
+  #coupons
+  addCoupon (code:ID!):CartType
+
+  #payment address operations
+  setPaymentAddress (input:AddressInput!):Boolean
+  setPaymentAddressById (address_id:ID!):Boolean
+  setPaymentMethod (code:String!):Boolean
+  setShippingAddress (input:AddressInput):Boolean
+  setShippingAddressById (address_id:ID):Boolean
+  setShippingMethod (code:String!):Boolean
+
+  #activity mutations
+  addAccountActivity (
+    key:String!
+    input:AccountActivityInput
+  ):Boolean
+  addAffiliateActivity (
+    key:String!
+    input:AffiliateActivityInput
+  ):Boolean
+
+  #wishlist
+  addWishlist (product_id:ID!):Boolean
+  deleteWishlist (product_id:ID!):Boolean
+  addReturn (input: ReturnInput):ReturnType #return_id
+
+  #customer mutation
+  deleteLoginAttempts (email:String!):Boolean
+  editCustomer (input:CustomerEdit!):Boolean
+  editPassword (
+    password:String!
+    confirm:String!
+  ):Boolean
+
+  register (input:CustomerInput):ID #add customer
+  login (email:String!, password:String!):ID
+  logout:Boolean
+  forgotten (email:String!):Boolean
+
+  contactus (
+    name:String!
+    email:String!
+    enquiry:String!
+  ):Boolean
+
+  setLanguage (code:String!):Boolean
+  setCurrency (code:String!):Boolean
+
+  editCode(email:String!, code:String!):Boolean
+
+  editNewsletter(newsletter:Boolean!):Boolean
+}
+
+schema {
+  query:RootQueryType
+  mutation:MutationType
+}

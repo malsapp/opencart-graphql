@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+<id>FAQs</id>
+<version>2.0.x</version>
+<vqmver>2.1.7</vqmver>
+<author>Malsapp</author>
+  <file name="admin/controller/common/column_left.php">
+    <operation>
+      <search position="before"><![CDATA[
+				if ($this->user->hasPermission('access', 'extension/event')) {
+			]]></search>
+          <add><![CDATA[
+		if ($this->user->hasPermission('access', 'extension/module/faqcategory')) {
+			$extension[] = array(
+				'name'	   => 'Faq Category',
+				'href'     => $this->url->link('catalog/faqcategory', 'token=' . $this->session->data['token'], true),
+				'children' => array()
+			);
+		}
+		]]></add>
+      </operation>
+  </file>
+
+
+  <file name="admin/controller/common/column_left.php">
+      <operation>
+          <search position="before"><![CDATA[
+		if ($this->user->hasPermission('access', 'extension/event')) {
+	]]></search>
+          <add><![CDATA[
+		if ($this->user->hasPermission('access', 'extension/module/faqcategory')) {
+			$extension[] = array(
+				'name'	   => 'Faq',
+				'href'     => $this->url->link('catalog/faq', 'token=' . $this->session->data['token'], true),
+				'children' => array()
+			);
+		}
+	]]></add>
+      </operation>
+  </file>
+	<file name="catalog/language/en-gb/common/footer.php">
+    <operation error="skip">
+        <search position="after"><![CDATA[
+						$_['text_information']  = 'Information';
+            ]]></search>
+                        <add><![CDATA[
+            $_['text_faq']			= 'FAQs';
+            ]]></add>
+    </operation>
+</file>
+<file name="catalog/language/ar/common/footer.php">
+	<operation error="skip">
+		<search position="after"><![CDATA[
+			$_['text_newsletter']   = 'القائمة البريدية';
+			]]></search>
+		<add><![CDATA[
+		$_['text_faq']			= 'اﻷسئلة الشائعة';
+		]]></add>
+	</operation>
+</file>
+<file name="catalog/controller/common/footer.php">
+	<operation error="skip">
+	<search position="after"><![CDATA[
+		$data['text_newsletter'] = $this->language->get('text_newsletter');
+	]]></search>
+	<add><![CDATA[
+		$data['text_faq'] = $this->language->get('text_faq');
+		$data['faq'] = $this->url->link('information/faq');
+	]]></add>
+	</operation>
+</file>
+
+
+<file name="catalog/view/theme/*/template/common/footer.tpl">
+	<operation error="skip">
+	<search position="after"><![CDATA[
+		<li><a href="<?php echo $sitemap; ?>"><?php echo $text_sitemap; ?></a></li>
+	]]></search>
+	<add><![CDATA[
+		<li><a href="<?php echo $faq; ?>"><?php echo $text_faq; ?></a></li>
+	]]></add>
+	</operation>
+</file>
+</modification>

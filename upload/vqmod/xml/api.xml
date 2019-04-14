@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Api</id>
+	<version>OC 2.x</version>
+	<vqmver>2.0.0</vqmver>
+	<author>MalsApp</author>
+	<file name="catalog/controller/api/login.php">
+		<operation>
+			<search position="replace" offset="11"><![CDATA[
+			// Check if IP is allowed
+			]]></search>
+			<add><![CDATA[
+				//removed Ip checking lines
+			]]></add>
+		</operation>
+	</file>
+</modification>

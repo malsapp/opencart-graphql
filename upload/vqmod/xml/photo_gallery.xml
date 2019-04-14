@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Photo Gallery</id>
+	<version>OC 2.x</version>
+	<vqmver>2.0.0</vqmver>
+	<author>Malsapp</author>
+	<file name="admin/controller/common/column_left.php">
+		<operation>
+			<search position="before"><![CDATA[
+				if ($this->user->hasPermission('access', 'extension/news')) {
+			]]></search>
+			<add><![CDATA[
+				if ($this->user->hasPermission('access', 'extension/photo_gallery')) {
+					$extension[] = array(
+						'name'	   => 'Photo Gallery',
+						'href'     => $this->url->link('extension/photo_gallery', 'token=' . $this->session->data['token'], true),
+						'children' => array()		
+					);
+				}
+			]]></add>
+		</operation>
+	</file>
+</modification>

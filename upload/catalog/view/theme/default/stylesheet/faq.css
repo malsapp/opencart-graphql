@@ -1,0 +1,20 @@
+/*faq css */
+.faq-block .faq-heading {
+	border: 1px solid #DBDEE1;
+	padding: 8px 8px 8px 22px;
+	font-weight: bold;
+	font-size: 13px;
+	color: #555555;
+	margin-bottom: 15px;
+	cursor: pointer;
+	background: #F8F8F8 url('../image/arrow-right.png') 10px 50% no-repeat;
+}
+.faq-block .active {
+	background: #F8F8F8 url('../image/arrow-down.png') 7px 50% no-repeat;
+}
+.faq-block .faq-content {
+	padding: 0px 0px 15px 0px;
+	display: none;
+	overflow: auto;
+}
+/* faq css */

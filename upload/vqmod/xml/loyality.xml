@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Loyality</id>
+	<version>OC 2.x</version>
+	<vqmver>2.0.0</vqmver>
+	<author>Malsapp</author>
+	<file name="admin/controller/customer/customer_group.php">
+		<!-- add reard points language to form -->
+		<operation>
+			<search position="after"><![CDATA[
+				$data['entry_sort_order'] = $this->language->get('entry_sort_order');
+			]]></search>
+			<add><![CDATA[
+				$data['entry_reward_points'] = $this->language->get('entry_reward_points');
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="before" index="2"><![CDATA[
+				$data['header'] = $this->load->controller('common/header');
+			]]></search>
+			<add><![CDATA[
+						if (isset($this->request->post['reward_points'])) {
+							$data['reward_points'] = $this->request->post['reward_points'];
+						} elseif (!empty($customer_group_info)) {
+							$data['reward_points'] = $customer_group_info['reward_points'];
+						} else {
+							$data['reward_points'] = '';
+						}			
+			]]></add>
+		</operation>
+		<!-- List Changes -->
+		<operation>
+			<search position="after"><![CDATA[
+				$data['column_sort_order'] = $this->language->get('column_sort_order');
+			]]></search>
+			<add><![CDATA[
+				$data['column_reward_points'] = $this->language->get('column_reward_points');
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+				'sort_order'        => $result['sort_order'],
+			]]></search>
+			<add><![CDATA[
+				'reward_points'        => $result['reward_points'],
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="after"><![CDATA[
+				$data['sort_sort_order'] = $this->url->link('customer/customer_group', 'token=' . $this->session->data['token'] . '&sort=cg.sort_order' . $url, true);
+			]]></search>
+			<add><![CDATA[
+				$data['sort_reward_points'] = $this->url->link('customer/customer_group', 'token=' . $this->session->data['token'] . '&sort=cg.reward_points' . $url, true);
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="before" index="2"><![CDATA[
+			$data['header'] = $this->load->controller('common/header');
+					]]></search>
+			<add><![CDATA[
+						if (isset($this->request->post['reward_points'])) {
+							$data['reward_points'] = $this->request->post['reward_points'];
+						} elseif (!empty($customer_group_info)) {
+							$data['reward_points'] = $customer_group_info['reward_points'];
+						} else {
+							$data['reward_points'] = '';
+						}			
+			]]></add>
+		</operation>
+	</file>
+
+	<file name="admin/model/customer/customer_group.php">
+		<operation>
+			<search position="replace"><![CDATA[
+				$this->db->query("INSERT INTO " . DB_PREFIX . "customer_group SET approval = '" . (int)$data['approval'] . "', sort_order = '" . (int)$data['sort_order'] . "'");
+			]]></search>
+			<add><![CDATA[
+				$this->db->query("INSERT INTO " . DB_PREFIX . "customer_group SET approval = '" . (int)$data['approval'] . "', sort_order = '" . (int)$data['sort_order'] . "', reward_points={$data['reward_points']}");
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+				$this->db->query("UPDATE " . DB_PREFIX . "customer_group SET approval = '" . (int)$data['approval'] . "', sort_order = '" . (int)$data['sort_order'] . "' WHERE customer_group_id = '" . (int)$customer_group_id . "'");
+			]]></search>
+			<add><![CDATA[
+				$this->db->query("UPDATE " . DB_PREFIX . "customer_group SET approval = '" . (int)$data['approval'] . "', sort_order = '" . (int)$data['sort_order'] .				"', reward_points='".(int)$data['reward_points']."'  WHERE customer_group_id = '" . (int)$customer_group_id . "'");
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			'cg.sort_order'
+			]]></search>
+			<add><![CDATA[
+			,'cg.reward_points'
+			]]></add>
+		</operation>
+	</file>
+
+
+	<file name="admin/view/template/customer/customer_group_form.tpl">
+		<operation>
+			<search position="before"><![CDATA[
+				</form>
+			]]></search>
+			<add><![CDATA[
+					<div class="form-group">
+		            <label class="col-sm-2 control-label" for="input-reward-points"><?php echo $entry_reward_points; ?></label>
+		            <div class="col-sm-10">
+		              <input type="text" name="reward_points" value="<?php echo $reward_points; ?>" placeholder="<?php echo $entry_reward_points; ?>" id="input-reward-points" class="form-control" />
+	            </div>
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/customer/customer_group_list.tpl">
+		<operation>
+			<search position="before"><![CDATA[
+        <td class="text-right"><?php echo $column_action; ?></td>
+			]]></search>
+			<add><![CDATA[
+		      <td class="text-right"><?php if ($sort == 'cg.reward_points') { ?>
+		        <a href="<?php echo $sort_reward_points; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_reward_points; ?></a>
+		        <?php } else { ?>
+		        <a href="<?php echo $sort_reward_points; ?>"><?php echo $column_reward_points; ?></a>
+		        <?php } ?></td>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+        <td class="text-right"><?php echo $customer_group['sort_order']; ?></td>
+			]]></search>
+			<add><![CDATA[
+        <td class="text-right"><?php echo $customer_group['reward_points']; ?></td>
+			]]></add>
+		</operation>
+	</file>
+
+	<file name="admin/language/en-gb/customer/customer_group.php">
+		<operation>
+			<search position="after"><![CDATA[
+				$_['column_sort_order'] = 'Sort Order';
+			]]></search>
+			<add><![CDATA[
+				$_['column_reward_points'] = 'Reward Points';
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+				$_['entry_sort_order']  = 'Sort Order';
+			]]></search>
+			<add><![CDATA[
+				$_['entry_reward_points']='Reward Points';
+			]]></add>
+		</operation>
+	</file>
+
+	<!-- Reward points Auto Add and Customer group elevation -->
+	<file name="catalog/model/checkout/order.php">
+		<operation>
+			<search position="before"><![CDATA[
+			return array(
+			]]></search>
+			<add><![CDATA[
+				$reward = 0;
+				$order_product_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_product WHERE order_id = '" . (int)$order_id . "'");
+
+				foreach ($order_product_query->rows as $product) {
+					$reward += $product['reward'];
+				}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+				'date_modified'           => $order_query->row['date_modified']
+			]]></search>
+			<add><![CDATA[
+				,'reward'									=> $reward
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="before"><![CDATA[
+				// Stock subtraction
+			]]></search>
+			<add><![CDATA[
+				//add rewards to user
+				$order_info = $this->getOrder($order_id);
+
+				if ($order_info && $order_info['customer_id'] && ($order_info['reward'] > 0)) {
+
+					$reward_total = $this->getTotalCustomerRewardsByOrderId($order_id);
+
+					if (!$reward_total) {
+						$this->addReward($order_info['customer_id'], $this->language->get('text_order_id') . ' #' . $order_id, $order_info['reward'], $order_id);
+					}
+				}
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="before"><![CDATA[
+				// Remove commission if sale is linked to affiliate referral.
+			]]></search>
+			<add><![CDATA[
+				// delete rewards on order
+					$order_info = $this->getOrder($order_id);
+
+					if ($order_info) {
+						$this->deleteReward($order_id);
+				}			
+				]]></add>
+		</operation>
+
+		<operation>
+			<search position="before"><![CDATA[
+				$this->cache->delete('product');
+			]]></search>
+			<add><![CDATA[
+				//check user's current group
+				$this->checkCustomerGroup($order_info['customer_id']);
+				]]></add>
+		</operation>
+
+		<operation>
+			<search position="after"><![CDATA[
+				class ModelCheckoutOrder extends Model {
+			]]></search>
+			<add><![CDATA[
+				private function getTotalCustomerRewardsByOrderId($order_id) {
+					$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "customer_reward WHERE order_id = '" . (int)$order_id . "' AND points > 0");
+
+					return $query->row['total'];
+				}
+
+				private function addReward($customer_id, $description = '', $points = '', $order_id = 0) {
+					$this->load->model('account/customer');
+					$customer_info = $this->model_account_customer->getCustomer($customer_id);
+
+					if ($customer_info) {
+						$this->db->query("INSERT INTO " . DB_PREFIX . "customer_reward SET customer_id = '" . (int)$customer_id . "', order_id = '" . (int)$order_id . "', points = '" . (int)$points . "', description = '" . $this->db->escape($description) . "', date_added = NOW()");
+					}
+				}
+				private function deleteReward($order_id) {
+					$this->db->query("DELETE FROM " . DB_PREFIX . "customer_reward WHERE order_id = '" . (int)$order_id . "' AND points > 0");
+				}
+
+				private function checkCustomerGroup($customer_id){
+					$customer_info=$this->model_account_customer->getCustomer($customer_id);
+					$reward_points=(int)$this->getRewardTotal($customer_id);
+					$customer_groups=$this->getCustomerGroups();
+					$current_customer_group_id=$customer_info['customer_group_id'];
+					$current_customer_group_reward_points=0;
+					foreach ($customer_groups as $customer_group) {
+						if($current_customer_group_id==$customer_group['customer_group_id']){
+							$current_customer_group_reward_points=$customer_group['reward_points'];
+						}
+						if($reward_points>=$customer_group['reward_points'] && $current_customer_group_reward_points < $customer_group['reward_points']){
+							$this->setCustomerGroup($customer_id,$customer_group['customer_group_id']);
+							break;
+						}
+					}
+				}
+
+				private function setCustomerGroup($customer_id,$customer_group_id){
+					$this->db->query("UPDATE " . DB_PREFIX . "customer SET customer_group_id = '" . (int)$customer_group_id . "' WHERE customer_id = '" . (int)$customer_id . "'");
+				}
+
+				private function getCustomerGroups() {
+					$sql = "SELECT * FROM " . DB_PREFIX . "customer_group cg LEFT JOIN " . DB_PREFIX . "customer_group_description cgd ON (cg.customer_group_id = cgd.customer_group_id) WHERE cgd.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+					$sql .= " ORDER BY cg.reward_points";
+					$sql .= " DESC";
+					$query = $this->db->query($sql);
+
+					return $query->rows;
+				}
+
+				private function getRewardTotal($customer_id) {
+					$query = $this->db->query("SELECT SUM(points) AS total FROM " . DB_PREFIX . "customer_reward WHERE customer_id = '" . (int)$customer_id . "'");
+
+					return $query->row['total'];
+				}
+			]]></add>
+		</operation>
+	</file>
+</modification>
+
+

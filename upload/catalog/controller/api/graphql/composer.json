@@ -1,0 +1,8 @@
+{
+    "name": "malsapp/oc-graphql",
+    "description": "OpenCart GraphQL API",
+    "require": {
+        "webonyx/graphql-php": "^0.11.1",
+        "ralouphie/getallheaders": "^2.0"
+    }
+}
