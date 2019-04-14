@@ -45,7 +45,7 @@ class ControllerCatalogFaq extends Controller {
 			if (isset($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
-			$this->response->redirect($this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->response->redirect($this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL'));
 			
 			}
 	
@@ -85,7 +85,7 @@ class ControllerCatalogFaq extends Controller {
 			if (isset($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
-			$this->response->redirect($this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->response->redirect($this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL'));
 			}
 
     	$this->getForm();
@@ -126,7 +126,7 @@ class ControllerCatalogFaq extends Controller {
 			if (isset($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
-			$this->response->redirect($this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . $url, 'SSL'));
+			$this->response->redirect($this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL'));
 			
 			
 		}
@@ -159,11 +159,16 @@ class ControllerCatalogFaq extends Controller {
 			$order = 'ASC';
 		}
 		
+	
 		if (isset($this->request->get['page'])) {
 			$page = $this->request->get['page'];
 		} else {
 			$page = 1;
 		}
+		
+		
+			
+		
 						
 		$url = '';
 						
@@ -199,13 +204,18 @@ class ControllerCatalogFaq extends Controller {
 			'filter_status'   => $filter_status,
 			'sort'            => $sort,
 			'order'           => $order,
-			'start'           => ($page - 1) * $this->config->get('config_admin_limit'),
-			'limit'           => $this->config->get('config_admin_limit')
+			'start'           => ($page - 1) * $this->config->get('config_limit_admin'),
+			'limit'           => $this->config->get('config_limit_admin')
 		);
 		
 		$qa_total = $this->model_catalog_faq->geTotaltFaqs($data);
+		//print_r($qa_total);
+		//print_r($data);
+		//die();
 			
 		$results = $this->model_catalog_faq->getFaqs($data);
+		
+		//print_r($results );
 				    	
 		foreach ($results as $result) {
 			
@@ -216,7 +226,7 @@ $data['faqs'][] = array(
 				'sort_order'	=> $result['sort_order'],
 				'status'		=> ($result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled')),
 				'selected'		=> isset($this->request->post['selected']) && in_array($result['faq_id'], $this->request->post['selected']),
-				'edit'       => $this->url->link('catalog/faq/edit', 'token=' . $this->session->data['token'] . '&faq_id=' . $result['faq_id'] . $url, 'SSL')
+				'edit'       => $this->url->link('catalog/faq/edit', 'user_token=' . $this->session->data['user_token'] . '&faq_id=' . $result['faq_id'] . $url, 'SSL')
 			);
     	}
 		
@@ -238,7 +248,7 @@ $data['faqs'][] = array(
 		$data['button_delete'] = $this->language->get('button_delete');
 		$data['button_filter'] = $this->language->get('button_filter');
 		 
- 		$data['token'] = $this->session->data['token'];
+ 		$data['token'] = $this->session->data['user_token'];
 		
  		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -273,26 +283,26 @@ $data['faqs'][] = array(
 		if (isset($this->request->get['page'])) {
 			$url .= '&page=' . $this->request->get['page'];
 		}
-		$data['insert'] = $this->url->link('catalog/faq/add', 'token=' . $this->session->data['token'] . $url, 'SSL');
-		$data['delete'] = $this->url->link('catalog/faq/delete', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$data['insert'] = $this->url->link('catalog/faq/add', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL');
+		$data['delete'] = $this->url->link('catalog/faq/delete', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL');
 		$data['breadcrumbs'] = array();
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('text_home'),
-			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL'),
       		'separator' => false
    		);
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . $url, 'SSL'),       		
+			'href'      => $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL'),       		
       		'separator' => ' :: '
    		);
 					
-		$data['sort_title'] = $this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . '&sort=fqd.title' . $url, 'SSL');
-		$data['sort_category'] = $this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . '&sort=fqc.title' . $url, 'SSL');
-		$data['sort_status'] = $this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . '&sort=fq.status' . $url, 'SSL');
-		$data['sort_order'] = $this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . '&sort=fq.sort_order' . $url, 'SSL');
+		$data['sort_title'] = $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . '&sort=fqd.title' . $url, 'SSL');
+		$data['sort_category'] = $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . '&sort=fqc.title' . $url, 'SSL');
+		$data['sort_status'] = $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . '&sort=fq.status' . $url, 'SSL');
+		$data['sort_order'] = $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . '&sort=fq.sort_order' . $url, 'SSL');
 		
 		$url = '';
 
@@ -317,7 +327,7 @@ $data['faqs'][] = array(
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_admin_limit');
 		$pagination->text = $this->language->get('text_pagination');
-		$pagination->url = $this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
+		$pagination->url = $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', 'SSL');
 			
 		$data['pagination'] = $pagination->render();
     	$data['results'] = sprintf($this->language->get('text_pagination'), ($qa_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($qa_total - $this->config->get('config_limit_admin'))) ? $qa_total
@@ -336,7 +346,11 @@ $data['faqs'][] = array(
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
-	$this->response->setOutput($this->load->view('catalog/faq_list.tpl', $data));	
+				error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
+	$this->response->setOutput($this->load->view('catalog/faq_list', $data));	
 		
   	}
 
@@ -415,25 +429,25 @@ $data['faqs'][] = array(
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('text_home'),
-			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL'),
 			'separator' => false
    		);
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . $url, 'SSL'),
+			'href'      => $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL'),
       		'separator' => ' :: '
    		);
 									
 		if (!isset($this->request->get['faq_id'])) {
-			$data['action'] = $this->url->link('catalog/faq/add', 'token=' . $this->session->data['token'] . $url, 'SSL');
+			$data['action'] = $this->url->link('catalog/faq/add', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL');
 		} else {
-			$data['action'] = $this->url->link('catalog/faq/edit', 'token=' . $this->session->data['token'] . '&faq_id=' . $this->request->get['faq_id'] . $url, 'SSL');
+			$data['action'] = $this->url->link('catalog/faq/edit', 'user_token=' . $this->session->data['user_token'] . '&faq_id=' . $this->request->get['faq_id'] . $url, 'SSL');
 		}
 		
-		$data['cancel'] = $this->url->link('catalog/faq', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$data['cancel'] = $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL');
 
-		$data['token'] = $this->session->data['token'];
+		$data['token'] = $this->session->data['user_token'];
 
 		if (isset($this->request->get['faq_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
       		$faq_info = $this->model_catalog_faq->getFaq($this->request->get['faq_id']);
@@ -442,6 +456,9 @@ $data['faqs'][] = array(
 		$this->load->model('localisation/language');
 		
 		$data['languages'] = $this->model_localisation_language->getLanguages();
+		
+		//print_r($data['languages']);
+		//die();
 		
 		if (isset($this->request->post['faq_description'])) {
 			$data['faq_description'] = $this->request->post['faq_description'];
@@ -495,8 +512,13 @@ $data['faqs'][] = array(
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
+		
+		error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-		$this->response->setOutput($this->load->view('catalog/faq_form.tpl', $data));
+
+
+		$this->response->setOutput($this->load->view('catalog/faq_form', $data));
   	} 
 	
   	private function validateForm() { 

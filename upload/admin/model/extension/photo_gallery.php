@@ -10,7 +10,7 @@ class ModelExtensionPhotoGallery extends Model {
 		}
 		
 		if ($data['keyword']) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "url_alias SET query = 'photo_id=" . (int)$photo_id . "', keyword = '" . $this->db->escape($data['keyword']) . "'");
+			$this->db->query("INSERT INTO " . DB_PREFIX . "seo_url SET query = 'photo_id=" . (int)$photo_id . "', keyword = '" . $this->db->escape($data['keyword']) . "'");
 		}
 	}
 	
@@ -23,15 +23,15 @@ class ModelExtensionPhotoGallery extends Model {
 			$this->db->query("INSERT INTO " . DB_PREFIX ."photo_description SET photo_id = '" . (int)$photo_id . "', language_id = '" . (int)$key . "', title = '" . $this->db->escape($value['title']) . "', description = '" . $this->db->escape($value['description']) . "', short_description = '" . $this->db->escape($value['short_description']) . "'");
 		}
 		
-		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'photo_id=" . (int)$photo_id. "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url WHERE query = 'photo_id=" . (int)$photo_id. "'");
 		
 		if ($data['keyword']) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "url_alias SET query = 'photo_id=" . (int)$photo_id . "', keyword = '" . $this->db->escape($data['keyword']) . "'");
+			$this->db->query("INSERT INTO " . DB_PREFIX . "seo_url SET query = 'photo_id=" . (int)$photo_id . "', keyword = '" . $this->db->escape($data['keyword']) . "'");
 		}
 	}
 	
 	public function getPhoto($photo_id) {
-		$query = $this->db->query("SELECT DISTINCT *, (SELECT keyword FROM " . DB_PREFIX . "url_alias WHERE query = 'photo_id=" . (int)$photo_id . "') AS keyword FROM " . DB_PREFIX . "photo WHERE photo_id = '" . (int)$photo_id . "'"); 
+		$query = $this->db->query("SELECT DISTINCT *, (SELECT keyword FROM " . DB_PREFIX . "seo_url WHERE query = 'photo_id=" . (int)$photo_id . "') AS keyword FROM " . DB_PREFIX . "photo WHERE photo_id = '" . (int)$photo_id . "'"); 
  
 		if ($query->num_rows) {
 			return $query->row;
@@ -77,7 +77,7 @@ class ModelExtensionPhotoGallery extends Model {
 	public function deletePhoto($photo_id) {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "photo WHERE photo_id = '" . (int)$photo_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "photo_description WHERE photo_id = '" . (int)$photo_id . "'");
-		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'photo_id=" . (int)$photo_id. "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url WHERE query = 'photo_id=" . (int)$photo_id. "'");
 	}
    
 	public function getTotalPhotos() {

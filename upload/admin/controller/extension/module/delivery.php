@@ -15,7 +15,7 @@ class ControllerExtensionModuleDelivery extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->response->redirect($this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=module', true));
+			$this->response->redirect($this->url->link('extension/module/delivery', 'user_token=' . $this->session->data['user_token'] . '&type=module', true));
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -39,22 +39,22 @@ class ControllerExtensionModuleDelivery extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_module'),
-			'href' => $this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=module', true)
+			'href' => $this->url->link('extension/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/module/delivery_agent', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('extension/module/delivery_agent', 'user_token=' . $this->session->data['user_token'], true)
 		);
 
-		$data['action'] = $this->url->link('extension/module/delivery', 'token=' . $this->session->data['token'], true);
+		$data['action'] = $this->url->link('extension/module/delivery', 'user_token=' . $this->session->data['user_token'], true);
 
-		$data['cancel'] = $this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=module', true);
+		$data['cancel'] = $this->url->link('extension/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
 
 		if (isset($this->request->post['delivery_status'])) {
 			$data['delivery_status'] = $this->request->post['delivery_status'];
@@ -66,11 +66,11 @@ class ControllerExtensionModuleDelivery extends Controller {
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('extension/module/delivery_agent', $data));
+		$this->response->setOutput($this->load->view('extension/module/delivery', $data));
 	}
 
 	protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/module/delivery_agent')) {
+		if (!$this->user->hasPermission('modify', 'extension/module/delivery')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 

@@ -44,7 +44,7 @@ class ModelCatalogFaq extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faq WHERE faq_id = '" . (int)$faq_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faq_description WHERE faq_id = '" . (int)$faq_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faq_to_store WHERE faq_id = '" . (int)$faq_id . "'");		
-		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'faq_id=" . (int)$faq_id. "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url WHERE query = 'faq_id=" . (int)$faq_id. "'");
 		
 		$this->cache->delete('faq');
 	}
@@ -97,7 +97,7 @@ class ModelCatalogFaq extends Model {
 			
 				$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 			}	
-			
+			//echo $sql;
 			$query = $this->db->query($sql);
 		
 			return $query->rows;

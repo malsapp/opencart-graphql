@@ -48,14 +48,20 @@ class ControllerApiGraphqlUsage extends Controller {
 					}
 
 					$rawBody = file_get_contents('php://input');
+					
+					
 					$data = json_decode($rawBody ?: '', true);
 					$requestString = isset($data['query']) ? $data['query'] : null;
 					$operationName = isset($data['operation']) ? $data['operation'] : null;
-					$variableValues = isset($data['variables']) ? $data['variables'] : null;
+					$variableValues = isset($data['variables']) ? $data['variables'] : null;		
+					
+					
 					if (!(is_object ($variableValues) || is_array($variableValues)))
 						$variableValues = json_decode($variableValues, True);
 					$types = GQL\Types::Instance ();
 					$rootValue = ['prefix' => 'You said: '];
+					
+				
 					$result = GraphQL::execute($types::$schema, $requestString, null, $this, $variableValues);
 				} catch (\Exception $e) {
 					$result = [

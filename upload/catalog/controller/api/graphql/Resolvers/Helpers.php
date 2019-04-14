@@ -16,7 +16,7 @@ function validateLogin ($args, &$ctx) {
     // Check if customer has been approved.
     $customer_info = $ctx->model_account_customer->getCustomerByEmail($args['email']);
 
-    if ($customer_info && !$customer_info['approved']) {
+    if ($customer_info && !$customer_info['status']) {
         throw new \Exception ($ctx->language->get('error_approved'));
     }
 
@@ -352,19 +352,52 @@ function getAddress ($ctx, $addressType = 'payment_address') {
 }
 
 function setAddress ($ctx, $args, $addressType = 'payment_address') {
+/*echo "iuyuiyuyuiy";
+die();*/
+
+
     if ($ctx->customer->isLogged ()) {
         if (isset ($args['address_id'])) {
             $ctx->session->data[$addressType] = array('address_id' => $args['address_id']);
+			
+			$file=fopen("/home2/readyft3/public_html/mrhen/test.txt","w");
+fwrite($file,serialize($args));
+fclose($file);
+
+		$file=fopen("/home2/readyft3/public_html/mrhen/testtt.txt","w");
+fwrite($file,$ctx->session->data[$addressType].$addressType);
+fclose($file);
+
+
+
             return true;
         }
+		
+	
 
         validateAddress ($ctx, $args['input']);
         $ctx->load->model ('account/address');
         $ctx->model_account_address->addAddress ($args['input']);
         if (null !== $ctx->db->getLastId ()) {
             $ctx->session->data[$addressType] = array('address_id' => $ctx->db->getLastId ());
+			
+				
+			$file=fopen("/home2/readyft3/public_html/mrhen/test.txt","w");
+fwrite($file,"tru7676e");
+fclose($file);
+
+
+
             return true;
         } else {
+		
+		
+			
+			$file=fopen("/home2/readyft3/public_html/mrhen/test.txt","w");
+fwrite($file,"trukkke");
+fclose($file);
+
+
             return false;
         }
     }
@@ -456,7 +489,8 @@ function getRegistry ($ctx) {
 }
 
 function getTotals (&$ctx) {
-    $ctx->load->model('extension/extension');
+//lucky
+    $ctx->load->model('setting/extension');
 
     $totals = array();
     $taxes = $ctx->cart->getTaxes();
@@ -471,7 +505,7 @@ function getTotals (&$ctx) {
 
     $sort_order = array();
 
-    $results = $ctx->model_extension_extension->getExtensions('total');
+    $results = $ctx->model_setting_extension->getExtensions('total');
 
     foreach ($results as $key => $value) {
         $sort_order[$key] = $ctx->config->get($value['code'] . '_sort_order');
@@ -480,7 +514,9 @@ function getTotals (&$ctx) {
     array_multisort($sort_order, SORT_ASC, $results);
 
     foreach ($results as $result) {
-        if ($ctx->config->get($result['code'] . '_status')) {
+	
+	
+        if ($ctx->config->get('total_' . $result['code'] . '_status')) {
             $ctx->load->model('extension/total/' . $result['code']);
             // We have to put the totals in an array so that they pass by reference.
             $ctx->{'model_extension_total_' . $result['code']}->getTotal($total_data);
@@ -505,12 +541,19 @@ function getShippingMethods (&$ctx) {
         // Shipping Methods
         $method_data = array();
 
-        $ctx->load->model('extension/extension');
+		//lucky
+        $ctx->load->model('setting/extension');
 
-        $results = $ctx->model_extension_extension->getExtensions('shipping');
+        $results = $ctx->model_setting_extension->getExtensions('shipping');
+		
+	
+		
+		
 
         foreach ($results as $result) {
-            if ($ctx->config->get($result['code'] . '_status')) {
+		
+		
+            if ($ctx->config->get('shipping_' .$result['code'] . '_status')) {
                 $ctx->load->model('extension/shipping/' . $result['code']);
 
                 $quote = $ctx->{'model_extension_shipping_' . $result['code']}->getQuote($ctx->session->data['shipping_address']);
@@ -527,12 +570,18 @@ function getShippingMethods (&$ctx) {
         }
 
         $sort_order = array();
+		
+			
+		
+		
 
         foreach ($method_data as $key => $value) {
             $sort_order[$key] = $value['sort_order'];
         }
 
         array_multisort($sort_order, SORT_ASC, $method_data);
+		
+	
 
         $ctx->session->data['shipping_methods'] = $method_data;
     }
@@ -648,6 +697,87 @@ if (!function_exists ('variationPrice')) {
     }
 
     function get_option_price ($option, $p_val) {
+        $result = 0;
+        $option_val = json_decode($option['value'], true);
+        $option_type = $option['type'];
+        $p_val_id = $p_val['product_option_value_id'];
+
+        if (strtolower ($option_type) != 'checkbox') {
+            if ($p_val_id == $option_val) {
+                if ($p_val['price_prefix'] == '+') {
+                    $result += $p_val['price'];
+                } else {
+                    $result -= $p_val['price'];
+                }
+            }
+        } else {
+            foreach ($option_val as $checked) {
+                if ($p_val_id == $checked) {
+                    if ($p_val['price_prefix'] == '+') {
+                        $result += $p_val['price'];
+                    } else {
+                        $result -= $p_val['price'];
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+}
+
+if (!function_exists ('variationData')) {
+    function variationData ($args, &$ctx) {
+        $product_id = $args['product_id'];
+        $options = $args['options'];
+
+        $price = 0;
+        if (!is_numeric ($product_id)) return null;
+        $ctx->load->model ('catalog/product');
+        $product = $ctx->model_catalog_product->getProduct ($product_id);
+        if ($product) $price = $product['price'];
+        if (is_numeric ($product['special']) && (float) $product['special']) {
+            $price = $product['special'];
+        }
+
+        if (!is_array ($options)) return array (
+            'variation_id' => '',
+            'description' => '',
+            'price' => $price,
+            'sale_price' => 0,
+            'description' => '',
+            'image' => '',
+            'weight' => '',
+            'quantity' => '',
+        );;
+
+        $p_options = $ctx->model_catalog_product->getProductOptions($product_id);
+
+        $options_price = 0;
+        foreach ($options as $option) {
+            $option_id = $option['product_option_id'];
+
+            foreach ($p_options as $p_options) {
+                if ($option['product_option_id'] == $p_options['product_option_id']) {
+                    foreach ($p_options['product_option_value'] as $p_val) {
+                        $options_price += get_option_data ($option, $p_val);
+                    }
+                }
+            }
+        }
+
+        return array (
+            'variation_id' => '',
+            'description' => '',
+            'price' => ($price + $options_price),
+            'sale_price' => 0,
+            'description' => '',
+            'image' => '',
+            'weight' => '',
+            'quantity' => '',
+        );
+    }
+
+    function get_option_data ($option, $p_val) {
         $result = 0;
         $option_val = json_decode($option['value'], true);
         $option_type = $option['type'];

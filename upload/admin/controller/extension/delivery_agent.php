@@ -54,7 +54,7 @@ class ControllerExtensionDeliveryAgent extends Controller {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
-			$this->response->redirect($this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . $url, true));
+			$this->response->redirect($this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . $url, true));
 		}
 
 		$this->getForm();
@@ -103,7 +103,7 @@ class ControllerExtensionDeliveryAgent extends Controller {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
-			$this->response->redirect($this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . $url, true));
+			$this->response->redirect($this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . $url, true));
 		}
 
 		$this->getForm();
@@ -154,7 +154,7 @@ class ControllerExtensionDeliveryAgent extends Controller {
 				$url .= '&page=' . $this->request->get['page'];
 			}
 
-			$this->response->redirect($this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . $url, true));
+			$this->response->redirect($this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . $url, true));
 		}
 
 		$this->getList();
@@ -237,16 +237,16 @@ class ControllerExtensionDeliveryAgent extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/home', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . $url, true)
 		);
 
-		$data['add'] = $this->url->link('extension/delivery_agent/add', 'token=' . $this->session->data['token'] . $url, true);
-		$data['delete'] = $this->url->link('extension/delivery_agent/delete', 'token=' . $this->session->data['token'] . $url, true);
+		$data['add'] = $this->url->link('extension/delivery_agent/add', 'user_token=' . $this->session->data['user_token'] . $url, true);
+		$data['delete'] = $this->url->link('extension/delivery_agent/delete', 'user_token=' . $this->session->data['user_token'] . $url, true);
 
 		$data['delivery_agents'] = array();
 
@@ -272,7 +272,7 @@ class ControllerExtensionDeliveryAgent extends Controller {
 				'email'          => $result['email'],
 				'status'         => ($result['status'] ? $this->language->get('text_enabled') : $this->language->get('text_disabled')),
 				'date_added'     => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
-				'edit'           => $this->url->link('extension/delivery_agent/edit', 'token=' . $this->session->data['token'] . '&delivery_agent_id=' . $result['delivery_agent_id'] . $url, true)
+				'edit'           => $this->url->link('extension/delivery_agent/edit', 'user_token=' . $this->session->data['user_token'] . '&delivery_agent_id=' . $result['delivery_agent_id'] . $url, true)
 			);
 		}
 
@@ -304,7 +304,7 @@ class ControllerExtensionDeliveryAgent extends Controller {
 		$data['button_filter'] = $this->language->get('button_filter');
 		$data['button_login'] = $this->language->get('button_login');
 
-		$data['token'] = $this->session->data['token'];
+		$data['user_token'] = $this->session->data['user_token'];
 
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
@@ -354,10 +354,10 @@ class ControllerExtensionDeliveryAgent extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		$data['sort_name'] = $this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . '&sort=name' . $url, true);
-		$data['sort_email'] = $this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . '&sort=c.email' . $url, true);
-		$data['sort_status'] = $this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . '&sort=c.status' . $url, true);
-		$data['sort_date_added'] = $this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . '&sort=c.date_added' . $url, true);
+		$data['sort_name'] = $this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . '&sort=name' . $url, true);
+		$data['sort_email'] = $this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . '&sort=c.email' . $url, true);
+		$data['sort_status'] = $this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . '&sort=c.status' . $url, true);
+		$data['sort_date_added'] = $this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . '&sort=c.date_added' . $url, true);
 
 		$url = '';
 
@@ -389,7 +389,7 @@ class ControllerExtensionDeliveryAgent extends Controller {
 		$pagination->total = $delivery_agent_total;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');
-		$pagination->url = $this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . $url . '&page={page}', true);
+		$pagination->url = $this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
@@ -412,6 +412,8 @@ class ControllerExtensionDeliveryAgent extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
+		
+	
 
 		$this->response->setOutput($this->load->view('extension/delivery_agent_list', $data));
 	}
@@ -464,7 +466,7 @@ protected function getForm() {
 		$data['tab_general'] = $this->language->get('tab_general');
 		$data['tab_address'] = $this->language->get('tab_address');
 
-		$data['token'] = $this->session->data['token'];
+		$data['user_token'] = $this->session->data['user_token'];
 
 		if (isset($this->request->get['delivery_agent_id'])) {
 			$data['delivery_agent_id'] = $this->request->get['delivery_agent_id'];
@@ -554,21 +556,21 @@ protected function getForm() {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . $url, true)
+			'href' => $this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . $url, true)
 		);
 
 		if (!isset($this->request->get['delivery_agent_id'])) {
-			$data['action'] = $this->url->link('extension/delivery_agent/add', 'token=' . $this->session->data['token'] . $url, true);
+			$data['action'] = $this->url->link('extension/delivery_agent/add', 'user_token=' . $this->session->data['user_token'] . $url, true);
 		} else {
-			$data['action'] = $this->url->link('extension/delivery_agent/edit', 'token=' . $this->session->data['token'] . '&delivery_agent_id=' . $this->request->get['delivery_agent_id'] . $url, true);
+			$data['action'] = $this->url->link('extension/delivery_agent/edit', 'user_token=' . $this->session->data['user_token'] . '&delivery_agent_id=' . $this->request->get['delivery_agent_id'] . $url, true);
 		}
 
-		$data['cancel'] = $this->url->link('extension/delivery_agent', 'token=' . $this->session->data['token'] . $url, true);
+		$data['cancel'] = $this->url->link('extension/delivery_agent', 'user_token=' . $this->session->data['user_token'] . $url, true);
 
 		if (isset($this->request->get['delivery_agent_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
 			$delivery_agent_info = $this->model_extension_delivery_agent->getDeliveryAgent($this->request->get['delivery_agent_id']);
@@ -649,6 +651,9 @@ protected function getForm() {
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
+		
+		error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 		$this->response->setOutput($this->load->view('extension/delivery_agent_form', $data));
 	}

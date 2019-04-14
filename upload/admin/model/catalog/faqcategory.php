@@ -24,7 +24,7 @@ class ModelCatalogFaqCategory extends Model {
 		}
 				
 		if ($data['keyword']) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "url_alias SET query = 'faqcategory_id=" . (int)$faqcategory_id . "', keyword = '" . $this->db->escape($data['keyword']) . "'");
+			$this->db->query("INSERT INTO " . DB_PREFIX . "seo_url SET query = 'faqcategory_id=" . (int)$faqcategory_id . "', keyword = '" . $this->db->escape($data['keyword']) . "'");
 		}
 		
 		$this->cache->delete('faqcategory');
@@ -51,16 +51,16 @@ class ModelCatalogFaqCategory extends Model {
 
 		if (isset($data['faqcategory_layout'])) {
 			foreach ($data['faqcategory_layout'] as $store_id => $layout) {
-				if ($layout['layout_id']) {
+				if (isset($layout['layout_id'])) {
 					$this->db->query("INSERT INTO " . DB_PREFIX . "faqcategory_to_layout SET faqcategory_id = '" . (int)$faqcategory_id . "', store_id = '" . (int)$store_id . "', layout_id = '" . (int)$layout['layout_id'] . "'");
 				}
 			}
 		}
 				
-		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'faqcategory_id=" . (int)$faqcategory_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url WHERE query = 'faqcategory_id=" . (int)$faqcategory_id . "'");
 		
 		if ($data['keyword']) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "url_alias SET query = 'faqcategory_id=" . (int)$faqcategory_id . "', keyword = '" . $this->db->escape($data['keyword']) . "'");
+			$this->db->query("INSERT INTO " . DB_PREFIX . "seo_url SET query = 'faqcategory_id=" . (int)$faqcategory_id . "', keyword = '" . $this->db->escape($data['keyword']) . "'");
 		}
 		
 		$this->cache->delete('faqcategory');
@@ -71,13 +71,13 @@ class ModelCatalogFaqCategory extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faqcategory_description WHERE faqcategory_id = '" . (int)$faqcategory_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faqcategory_to_store WHERE faqcategory_id = '" . (int)$faqcategory_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "faqcategory_to_layout WHERE faqcategory_id = '" . (int)$faqcategory_id . "'");
-		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'faqcategory_id=" . (int)$faqcategory_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url WHERE query = 'faqcategory_id=" . (int)$faqcategory_id . "'");
 
 		$this->cache->delete('faqcategory');
 	}	
 	
 	public function getCategory($faqcategory_id) {
-		$query = $this->db->query("SELECT DISTINCT *, (SELECT keyword FROM " . DB_PREFIX . "url_alias WHERE query = 'faqcategory_id=" . (int)$faqcategory_id . "') AS keyword FROM " . DB_PREFIX . "faqcategory WHERE faqcategory_id = '" . (int)$faqcategory_id . "'");
+		$query = $this->db->query("SELECT DISTINCT *, (SELECT keyword FROM " . DB_PREFIX . "seo_url WHERE query = 'faqcategory_id=" . (int)$faqcategory_id . "') AS keyword FROM " . DB_PREFIX . "faqcategory WHERE faqcategory_id = '" . (int)$faqcategory_id . "'");
 		
 		return $query->row;
 	}

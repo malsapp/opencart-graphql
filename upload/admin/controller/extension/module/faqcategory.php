@@ -14,7 +14,7 @@ class ControllerExtensionModuleFaqCategory extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->response->redirect($this->url->link('extension/extension', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('extension/module/faqcategory', 'user_token=' . $this->session->data['user_token'], 'SSL'));
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -35,25 +35,27 @@ class ControllerExtensionModuleFaqCategory extends Controller {
 		}
 
 		$data['breadcrumbs'] = array();
+		//print_r( $this->session->data);
+		//die();
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL')
+			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], 'SSL')
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_module'),
-			'href' => $this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL')
+			'href' => $this->url->link('extension/module', 'user_token=' . $this->session->data['user_token'], 'SSL')
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/module/faqcategory', 'token=' . $this->session->data['token'], 'SSL')
+			'href' => $this->url->link('extension/module/faqcategory', 'user_token=' . $this->session->data['user_token'], 'SSL')
 		);
 
-		$data['action'] = $this->url->link('extension/module/faqcategory', 'token=' . $this->session->data['token'], 'SSL');
+		$data['action'] = $this->url->link('extension/module/faqcategory', 'user_token=' . $this->session->data['user_token'], 'SSL');
 
-		$data['cancel'] = $this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL');
+		$data['cancel'] = $this->url->link('extension/module', 'user_token=' . $this->session->data['user_token'], 'SSL');
 
 		if (isset($this->request->post['faqcategory_status'])) {
 			$data['faqcategory_status'] = $this->request->post['faqcategory_status'];
@@ -64,8 +66,11 @@ class ControllerExtensionModuleFaqCategory extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
+		
+		error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-		$this->response->setOutput($this->load->view('extension/module/faqcategory.tpl', $data));
+		$this->response->setOutput($this->load->view('extension/module/faqcategory', $data));
 	}
 
 	protected function validate() {

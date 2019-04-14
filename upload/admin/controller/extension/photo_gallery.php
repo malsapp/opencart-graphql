@@ -19,12 +19,12 @@ class ControllerExtensionPhotoGallery extends Controller {
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('text_home'),
-			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL')
+			'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL')
 		);
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('extension/photo_gallery', 'token=' . $this->session->data['token'] . $url, 'SSL')
+			'href'      => $this->url->link('extension/photo_gallery', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL')
    		);
 		
 		if (isset($this->session->data['success'])) {
@@ -63,7 +63,7 @@ class ControllerExtensionPhotoGallery extends Controller {
 		$pagination->total = $total;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');
-		$pagination->url = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
+		$pagination->url = $this->url->link('catalog/product', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', 'SSL');
 
 		$data['pagination'] = $pagination->render();
 
@@ -90,8 +90,8 @@ class ControllerExtensionPhotoGallery extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 		
-		$data['add'] = $this->url->link('extension/photo_gallery/insert', '&token=' . $this->session->data['token'] . $url, 'SSL');
-		$data['delete'] = $this->url->link('extension/photo_gallery/delete', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$data['add'] = $this->url->link('extension/photo_gallery/insert', '&user_token=' . $this->session->data['user_token'] . $url, 'SSL');
+		$data['delete'] = $this->url->link('extension/photo_gallery/delete', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL');
 		
 		$data['all_photos'] = array();
 		
@@ -106,7 +106,7 @@ class ControllerExtensionPhotoGallery extends Controller {
 				'short_description'	=> $photo['short_description'],
 				'image' 			=> $this->model_tool_image->resize($photo['image'] ? $photo['image'] : 'no_image.png', 100, 100),
 				'date_added' 		=> date($this->language->get('date_format_short'), strtotime($photo['date_added'])),
-				'edit' 				=> $this->url->link('extension/photo_gallery/edit', 'photo_id=' . $photo['photo_id'] . '&token=' . $this->session->data['token'] . $url, 'SSL')
+				'edit' 				=> $this->url->link('extension/photo_gallery/edit', 'photo_id=' . $photo['photo_id'] . '&user_token=' . $this->session->data['user_token'] . $url, 'SSL')
 			);
 		}
 		
@@ -114,7 +114,7 @@ class ControllerExtensionPhotoGallery extends Controller {
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('extension/photo_list.tpl', $data));	
+		$this->response->setOutput($this->load->view('extension/photo_list', $data));	
 	}
 	
 	public function edit() {
@@ -129,13 +129,18 @@ class ControllerExtensionPhotoGallery extends Controller {
 			$this->log->write('edit '.$this->request->get['photo_id']);
 			$this->session->data['success'] = $this->language->get('text_success');
 						
-			$this->response->redirect($this->url->link('extension/photo_gallery', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('extension/photo_gallery', 'user_token=' . $this->session->data['user_token'], 'SSL'));
 		}
 		
 		$this->form();
 	}
 	
 	public function insert() {
+	
+	error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 		$this->language->load('extension/photo_gallery');
 		
 		$this->load->model('extension/photo_gallery');
@@ -147,7 +152,7 @@ class ControllerExtensionPhotoGallery extends Controller {
 			
 			$this->session->data['success'] = $this->language->get('text_success');
 						
-			$this->response->redirect($this->url->link('extension/photo_gallery', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('extension/photo_gallery', 'user_token=' . $this->session->data['user_token'], 'SSL'));
 		}
 
 		$this->form();
@@ -162,23 +167,23 @@ class ControllerExtensionPhotoGallery extends Controller {
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('text_home'),
-			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL'),
       		'separator' => false
    		);
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('extension/photo_gallery', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('extension/photo_gallery', 'user_token=' . $this->session->data['user_token'], 'SSL'),
       		'separator' => ' :: '
    		);
 		
 		if (isset($this->request->get['photo_id'])) {
-			$data['action'] = $this->url->link('extension/photo_gallery/edit', '&photo_id=' . $this->request->get['photo_id'] . '&token=' . $this->session->data['token'], 'SSL');
+			$data['action'] = $this->url->link('extension/photo_gallery/edit', '&photo_id=' . $this->request->get['photo_id'] . '&user_token=' . $this->session->data['user_token'], 'SSL');
 		} else {
-			$data['action'] = $this->url->link('extension/photo_gallery/insert', '&token=' . $this->session->data['token'], 'SSL');
+			$data['action'] = $this->url->link('extension/photo_gallery/insert', '&user_token=' . $this->session->data['user_token'], 'SSL');
 		}
 		
-		$data['cancel'] = $this->url->link('extension/photo_gallery', '&token=' . $this->session->data['token'], 'SSL');
+		$data['cancel'] = $this->url->link('extension/photo_gallery', '&user_token=' . $this->session->data['user_token'], 'SSL');
 		
 		$data['heading_title'] = $this->language->get('heading_title');
 		
@@ -197,7 +202,7 @@ class ControllerExtensionPhotoGallery extends Controller {
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		
-		$data['token'] = $this->session->data['token'];
+		$data['user_token'] = $this->session->data['user_token'];
 		
 		$this->load->model('localisation/language');
 		
@@ -263,7 +268,7 @@ class ControllerExtensionPhotoGallery extends Controller {
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('extension/photo_form.tpl', $data));
+		$this->response->setOutput($this->load->view('extension/photo_form', $data));
 	}
 	
 	public function delete() {
@@ -281,7 +286,7 @@ class ControllerExtensionPhotoGallery extends Controller {
 			$this->session->data['success'] = $this->language->get('text_success');
 		}
 		
-		$this->response->redirect($this->url->link('extension/photo_gallery', 'token=' . $this->session->data['token'], 'SSL'));
+		$this->response->redirect($this->url->link('extension/photo_gallery', 'user_token=' . $this->session->data['user_token'], 'SSL'));
 	}
 	
 	protected function validateDelete() {

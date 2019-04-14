@@ -447,6 +447,8 @@ trait RootQueryTypeResolver {
     }
 
     public function RootQueryType_shippingAddress ($root, $args, &$ctx) {
+	
+	
         return getAddress ($ctx, 'shipping_address');
     }
 
@@ -454,11 +456,18 @@ trait RootQueryTypeResolver {
         return null;
     }
 
-    public function RootQueryType_shippingMethods ($root, $args, &$ctx) {
+		public function RootQueryType_shippingMethods ($root, $args, &$ctx) {
+	
+	
         $res = getShippingMethods ($ctx);
+		
+	
         foreach ($res as &$item) {
             $item['quote'] = reset($item['quote']);
         }
+		
+		
+		
         return $res;
     }
 
@@ -573,6 +582,10 @@ trait RootQueryTypeResolver {
 
     public function RootQueryType_productVariationPrice ($root, $args, &$ctx) {
         return variationPrice ($args, $ctx);
+    }
+
+    public function RootQueryType_productVariationData ($root, $args, &$ctx) {
+        return variationData ($args, $ctx);
     }
 
     public function RootQueryType_siteInfo ($root, $args, &$ctx) {

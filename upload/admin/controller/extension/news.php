@@ -19,12 +19,12 @@ class ControllerExtensionNews extends Controller {
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('text_home'),
-			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL')
+			'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL')
 		);
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('extension/news', 'token=' . $this->session->data['token'] . $url, 'SSL')
+			'href'      => $this->url->link('extension/news', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL')
    		);
 		
 		if (isset($this->session->data['success'])) {
@@ -63,7 +63,7 @@ class ControllerExtensionNews extends Controller {
 		$pagination->total = $total;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');
-		$pagination->url = $this->url->link('catalog/product', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
+		$pagination->url = $this->url->link('catalog/product', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', 'SSL');
 
 		$data['pagination'] = $pagination->render();
 
@@ -89,8 +89,8 @@ class ControllerExtensionNews extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 		
-		$data['add'] = $this->url->link('extension/news/insert', '&token=' . $this->session->data['token'] . $url, 'SSL');
-		$data['delete'] = $this->url->link('extension/news/delete', 'token=' . $this->session->data['token'] . $url, 'SSL');
+		$data['add'] = $this->url->link('extension/news/insert', '&user_token=' . $this->session->data['user_token'] . $url, 'SSL');
+		$data['delete'] = $this->url->link('extension/news/delete', 'user_token=' . $this->session->data['user_token'] . $url, 'SSL');
 		
 		$data['all_news'] = array();
 		
@@ -102,7 +102,7 @@ class ControllerExtensionNews extends Controller {
 				'title' 			=> $news['title'],
 				'short_description'	=> $news['short_description'],
 				'date_added' 		=> date($this->language->get('date_format_short'), strtotime($news['date_added'])),
-				'edit' 				=> $this->url->link('extension/news/edit', 'news_id=' . $news['news_id'] . '&token=' . $this->session->data['token'] . $url, 'SSL')
+				'edit' 				=> $this->url->link('extension/news/edit', 'news_id=' . $news['news_id'] . '&user_token=' . $this->session->data['user_token'] . $url, 'SSL')
 			);
 		}
 		
@@ -110,7 +110,7 @@ class ControllerExtensionNews extends Controller {
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('extension/news_list.tpl', $data));	
+		$this->response->setOutput($this->load->view('extension/news_list', $data));	
 	}
 	
 	public function edit() {
@@ -125,13 +125,18 @@ class ControllerExtensionNews extends Controller {
 			
 			$this->session->data['success'] = $this->language->get('text_success');
 						
-			$this->response->redirect($this->url->link('extension/news', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('extension/news', 'user_token=' . $this->session->data['user_token'], 'SSL'));
 		}
 		
 		$this->form();
 	}
 	
 	public function insert() {
+	
+	error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 		$this->language->load('extension/news');
 		
 		$this->load->model('extension/news');
@@ -143,7 +148,7 @@ class ControllerExtensionNews extends Controller {
 			
 			$this->session->data['success'] = $this->language->get('text_success');
 						
-			$this->response->redirect($this->url->link('extension/news', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('extension/news', 'user_token=' . $this->session->data['user_token'], 'SSL'));
 		}
 
 		$this->form();
@@ -158,23 +163,23 @@ class ControllerExtensionNews extends Controller {
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('text_home'),
-			'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL'),
       		'separator' => false
    		);
 
    		$data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('extension/news', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('extension/news', 'user_token=' . $this->session->data['user_token'], 'SSL'),
       		'separator' => ' :: '
    		);
 		
 		if (isset($this->request->get['news_id'])) {
-			$data['action'] = $this->url->link('extension/news/edit', '&news_id=' . $this->request->get['news_id'] . '&token=' . $this->session->data['token'], 'SSL');
+			$data['action'] = $this->url->link('extension/news/edit', '&news_id=' . $this->request->get['news_id'] . '&user_token=' . $this->session->data['user_token'], 'SSL');
 		} else {
-			$data['action'] = $this->url->link('extension/news/insert', '&token=' . $this->session->data['token'], 'SSL');
+			$data['action'] = $this->url->link('extension/news/insert', '&user_token=' . $this->session->data['user_token'], 'SSL');
 		}
 		
-		$data['cancel'] = $this->url->link('extension/news', '&token=' . $this->session->data['token'], 'SSL');
+		$data['cancel'] = $this->url->link('extension/news', '&user_token=' . $this->session->data['user_token'], 'SSL');
 		
 		$data['heading_title'] = $this->language->get('heading_title');
 		
@@ -193,7 +198,7 @@ class ControllerExtensionNews extends Controller {
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		
-		$data['token'] = $this->session->data['token'];
+		$data['user_token'] = $this->session->data['user_token'];
 		
 		$this->load->model('localisation/language');
 		
@@ -259,7 +264,10 @@ class ControllerExtensionNews extends Controller {
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('extension/news_form.tpl', $data));
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+		$this->response->setOutput($this->load->view('extension/news_form', $data));
 	}
 	
 	public function delete() {
@@ -277,7 +285,7 @@ class ControllerExtensionNews extends Controller {
 			$this->session->data['success'] = $this->language->get('text_success');
 		}
 		
-		$this->response->redirect($this->url->link('extension/news', 'token=' . $this->session->data['token'], 'SSL'));
+		$this->response->redirect($this->url->link('extension/news', 'user_token=' . $this->session->data['user_token'], 'SSL'));
 	}
 	
 	protected function validateDelete() {
