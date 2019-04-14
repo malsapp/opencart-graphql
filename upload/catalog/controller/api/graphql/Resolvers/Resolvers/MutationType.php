@@ -13,16 +13,11 @@ trait MutationTypeResolver {
 
     public function MutationType_addAddress ($root, $args, &$ctx) {
         if (!$ctx->customer->isLogged ()) return false;
-		
-		
         $ctx->load->model ('account/address');
-		
         validateAddress ($ctx, $args['input']);
-		
-		//echo $args['input']['firstname'];
-		
-		
-        return $ctx->model_account_address->addAddress ($ctx->customer->getId(),$args['input']);
+        // return $ctx->model_account_address->addAddress ($args['input']);
+        // (customer_id , args) from v3 -- 20190409-foly
+        return $ctx->model_account_address->addAddress ($ctx->customer->isLogged(),$args['input']);   
     }
 
     public function MutationType_editAddress ($root, $args, &$ctx) {
@@ -191,8 +186,6 @@ trait MutationTypeResolver {
     public function MutationType_setPaymentMethod ($root, $args, &$ctx) { return null; }
 
     public function MutationType_setShippingAddress ($root, $args, &$ctx) {
-	
-	
         return setAddress ($ctx, $args, 'shipping_address');
     }
 
@@ -201,8 +194,6 @@ trait MutationTypeResolver {
     }
 
     public function MutationType_setShippingMethod ($root, $args, &$ctx) {
-	
-		//return true;
         $ctx->load->language('checkout/checkout');
         $shipping = explode('.', $args['code']);
         if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($ctx->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
@@ -313,14 +304,14 @@ trait MutationTypeResolver {
             }
         }
 
-	// Re-apply coupon
-	if (isset ($ctx->session->data['coupon'])) {
+	    // Re-apply coupon
+	    if (isset ($ctx->session->data['coupon'])) {
             $ctx->load->model ('extension/total/coupon');
             if (!$ctx->model_extension_total_coupon->getCoupon ($ctx->session->data['coupon'])) {
                 unset ($ctx->session->data['coupon']);
             }
         }
-
+        // return $ctx->session->getId();
         return $ctx->sess;
     }
 

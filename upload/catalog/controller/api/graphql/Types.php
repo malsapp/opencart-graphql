@@ -2563,7 +2563,7 @@ class Types {
                     'type' => Type::string ()
                 ],
                 'weight' => [
-                    'type' => Type::string ()
+                    'type' => Type::float ()
                 ],
                 'quantity' => [
                     'type' => Type::string ()
@@ -3793,14 +3793,13 @@ class Types {
                         return self::$resolvers->MutationType_setShippingAddress ($root, $args, $ctx);
                     }
                 ],
-                'setShippingAddressByIdsfdsfd' => [
+                'setShippingAddressById' => [
                     'type' => Type::boolean (),
                     'args' => [
                         'address_id' => Type::id ()
                     ],
                     'resolve' => function ($root, $args, $ctx) {
-					
-					     return self::$resolvers->MutationType_setShippingAddressById ($root, $args, $ctx);
+                        return self::$resolvers->MutationType_setShippingAddressById ($root, $args, $ctx);
                     }
                 ],
                 'setShippingMethod' => [
@@ -4026,6 +4025,7 @@ class Types {
     }
 
     public static function Instance () {
+
         if (!isset (static::$types)) static::$types = new Types ();
         return static::$types;
     }

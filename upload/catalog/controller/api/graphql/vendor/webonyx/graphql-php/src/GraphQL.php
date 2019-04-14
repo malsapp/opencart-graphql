@@ -26,6 +26,8 @@ class GraphQL
      */
     public static function execute(Schema $schema, $requestString, $rootValue = null, $contextValue = null, $variableValues = null, $operationName = null)
     {
+        // echo("\nSchema\n");
+        // print_r($schema);
         $result = self::executeAndReturnResult($schema, $requestString, $rootValue, $contextValue, $variableValues, $operationName);
 
         if ($result instanceof ExecutionResult) {

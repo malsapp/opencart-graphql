@@ -352,52 +352,19 @@ function getAddress ($ctx, $addressType = 'payment_address') {
 }
 
 function setAddress ($ctx, $args, $addressType = 'payment_address') {
-/*echo "iuyuiyuyuiy";
-die();*/
-
-
     if ($ctx->customer->isLogged ()) {
         if (isset ($args['address_id'])) {
             $ctx->session->data[$addressType] = array('address_id' => $args['address_id']);
-			
-			$file=fopen("/home2/readyft3/public_html/mrhen/test.txt","w");
-fwrite($file,serialize($args));
-fclose($file);
-
-		$file=fopen("/home2/readyft3/public_html/mrhen/testtt.txt","w");
-fwrite($file,$ctx->session->data[$addressType].$addressType);
-fclose($file);
-
-
-
             return true;
         }
-		
-	
 
         validateAddress ($ctx, $args['input']);
         $ctx->load->model ('account/address');
         $ctx->model_account_address->addAddress ($args['input']);
         if (null !== $ctx->db->getLastId ()) {
             $ctx->session->data[$addressType] = array('address_id' => $ctx->db->getLastId ());
-			
-				
-			$file=fopen("/home2/readyft3/public_html/mrhen/test.txt","w");
-fwrite($file,"tru7676e");
-fclose($file);
-
-
-
             return true;
         } else {
-		
-		
-			
-			$file=fopen("/home2/readyft3/public_html/mrhen/test.txt","w");
-fwrite($file,"trukkke");
-fclose($file);
-
-
             return false;
         }
     }
@@ -433,11 +400,12 @@ function getSession (&$ctx, $session_id) {
         }
     }
 
-    $session = new Sess('db');
+    $session = new Sess('db',$reg);
     $ctx->session = $session;
-
-    $ctx->session->destroy ('default');
-    $ctx->session->start ('gql', $session_id);
+    // $ctx->session = new \Session('db',$reg);
+    $ctx->session->__destroy ('default');
+    $ctx->session->start ($session_id);
+    // $ctx->session->start ('gql', $session_id);
 
     if (!isset ($ctx->session->data)) $ctx->session->data = array();
 
@@ -489,7 +457,6 @@ function getRegistry ($ctx) {
 }
 
 function getTotals (&$ctx) {
-//lucky
     $ctx->load->model('setting/extension');
 
     $totals = array();
@@ -504,7 +471,7 @@ function getTotals (&$ctx) {
     );
 
     $sort_order = array();
-
+    
     $results = $ctx->model_setting_extension->getExtensions('total');
 
     foreach ($results as $key => $value) {
@@ -514,8 +481,7 @@ function getTotals (&$ctx) {
     array_multisort($sort_order, SORT_ASC, $results);
 
     foreach ($results as $result) {
-	
-	
+        //if ($ctx->config->get($result['code'] . '_status')) {
         if ($ctx->config->get('total_' . $result['code'] . '_status')) {
             $ctx->load->model('extension/total/' . $result['code']);
             // We have to put the totals in an array so that they pass by reference.
@@ -541,18 +507,14 @@ function getShippingMethods (&$ctx) {
         // Shipping Methods
         $method_data = array();
 
-		//lucky
+        // $ctx->load->model('extension/extension');
         $ctx->load->model('setting/extension');
 
+        // $results = $ctx->model_extension_extension->getExtensions('shipping');
         $results = $ctx->model_setting_extension->getExtensions('shipping');
-		
-	
-		
-		
 
         foreach ($results as $result) {
-		
-		
+            //if ($ctx->config->get($result['code'] . '_status')) {
             if ($ctx->config->get('shipping_' .$result['code'] . '_status')) {
                 $ctx->load->model('extension/shipping/' . $result['code']);
 
@@ -570,18 +532,12 @@ function getShippingMethods (&$ctx) {
         }
 
         $sort_order = array();
-		
-			
-		
-		
 
         foreach ($method_data as $key => $value) {
             $sort_order[$key] = $value['sort_order'];
         }
 
         array_multisort($sort_order, SORT_ASC, $method_data);
-		
-	
 
         $ctx->session->data['shipping_methods'] = $method_data;
     }
