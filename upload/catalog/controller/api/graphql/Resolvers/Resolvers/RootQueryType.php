@@ -572,7 +572,7 @@ trait RootQueryTypeResolver {
     }
 
     public function RootQueryType_productVariationPrice ($root, $args, &$ctx) {
-        return variationPrice ($args, $ctx);
+        return variationData ($args, $ctx);
     }
 
     public function RootQueryType_productVariationData ($root, $args, &$ctx) {

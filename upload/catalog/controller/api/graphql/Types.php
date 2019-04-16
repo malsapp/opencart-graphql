@@ -3596,13 +3596,13 @@ class Types {
                     }
                 ],
                 'productVariationPrice' => [
-                    'type' => self::$PriceType,
+                    'type' => self::$ProductVariationType,
                     'args' => [
                         'product_id' => Type::nonNull (Type::id ()),
                         'options' => Type::nonNull (Type::listOf (self::$OrderProductOptionInput))
                     ],
                     'resolve' => function ($root, $args, $ctx) {
-                        return self::$resolvers->RootQueryType_productVariationPrice ($root, $args, $ctx);
+                        return self::$resolvers->RootQueryType_productVariationData ($root, $args, $ctx);
                     }
                 ],
                 'productVariationData' => [

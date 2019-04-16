@@ -616,70 +616,70 @@ if (!function_exists ('pinfo')) {
     }
 }
 
-if (!function_exists ('variationPrice')) {
-    function variationPrice ($args, &$ctx) {
-        $product_id = $args['product_id'];
-        $options = $args['options'];
+// if (!function_exists ('variationPrice')) {
+//     function variationPrice ($args, &$ctx) {
+//         $product_id = $args['product_id'];
+//         $options = $args['options'];
 
-        $price = 0;
-        if (!is_numeric ($product_id)) return null;
-        $ctx->load->model ('catalog/product');
-        $product = $ctx->model_catalog_product->getProduct ($product_id);
-        if ($product) $price = $product['price'];
-        if (is_numeric ($product['special']) && (float) $product['special']) {
-            $price = $product['special'];
-        }
+//         $price = 0;
+//         if (!is_numeric ($product_id)) return null;
+//         $ctx->load->model ('catalog/product');
+//         $product = $ctx->model_catalog_product->getProduct ($product_id);
+//         if ($product) $price = $product['price'];
+//         if (is_numeric ($product['special']) && (float) $product['special']) {
+//             $price = $product['special'];
+//         }
 
-        if (!is_array ($options)) return array ('price' => $price);
+//         if (!is_array ($options)) return array ('price' => $price);
 
-        $p_options = $ctx->model_catalog_product->getProductOptions($product_id);
+//         $p_options = $ctx->model_catalog_product->getProductOptions($product_id);
 
-        $options_price = 0;
-        foreach ($options as $option) {
-            $option_id = $option['product_option_id'];
+//         $options_price = 0;
+//         foreach ($options as $option) {
+//             $option_id = $option['product_option_id'];
 
-            foreach ($p_options as $p_options) {
-                if ($option['product_option_id'] == $p_options['product_option_id']) {
-                    foreach ($p_options['product_option_value'] as $p_val) {
-                        $options_price += get_option_price ($option, $p_val);
-                    }
-                }
-            }
-        }
+//             foreach ($p_options as $p_options) {
+//                 if ($option['product_option_id'] == $p_options['product_option_id']) {
+//                     foreach ($p_options['product_option_value'] as $p_val) {
+//                         $options_price += get_option_price ($option, $p_val);
+//                     }
+//                 }
+//             }
+//         }
 
-        return array (
-            'price' => ($price + $options_price)
-        );
-    }
+//         return array (
+//             'price' => ($price + $options_price)
+//         );
+//     }
 
-    function get_option_price ($option, $p_val) {
-        $result = 0;
-        $option_val = json_decode($option['value'], true);
-        $option_type = $option['type'];
-        $p_val_id = $p_val['product_option_value_id'];
+//     function get_option_price ($option, $p_val) {
+//         $result = 0;
+//         $option_val = json_decode($option['value'], true);
+//         $option_type = $option['type'];
+//         $p_val_id = $p_val['product_option_value_id'];
 
-        if (strtolower ($option_type) != 'checkbox') {
-            if ($p_val_id == $option_val) {
-                if ($p_val['price_prefix'] == '+') {
-                    $result += $p_val['price'];
-                } else {
-                    $result -= $p_val['price'];
-                }
-            }
-        } else {
-            foreach ($option_val as $checked) {
-                if ($p_val_id == $checked) {
-                    if ($p_val['price_prefix'] == '+') {
-                        $result += $p_val['price'];
-                    } else {
-                        $result -= $p_val['price'];
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-}
+//         if (strtolower ($option_type) != 'checkbox') {
+//             if ($p_val_id == $option_val) {
+//                 if ($p_val['price_prefix'] == '+') {
+//                     $result += $p_val['price'];
+//                 } else {
+//                     $result -= $p_val['price'];
+//                 }
+//             }
+//         } else {
+//             foreach ($option_val as $checked) {
+//                 if ($p_val_id == $checked) {
+//                     if ($p_val['price_prefix'] == '+') {
+//                         $result += $p_val['price'];
+//                     } else {
+//                         $result -= $p_val['price'];
+//                     }
+//                 }
+//             }
+//         }
+//         return $result;
+//     }
+// }
 
 if (!function_exists ('variationData')) {
     function variationData ($args, &$ctx) {
@@ -702,7 +702,7 @@ if (!function_exists ('variationData')) {
             'sale_price' => 0,
             'description' => '',
             'image' => '',
-            'weight' => '',
+            'weight' => 0.0,
             'quantity' => '',
         );;
 
@@ -728,7 +728,7 @@ if (!function_exists ('variationData')) {
             'sale_price' => 0,
             'description' => '',
             'image' => '',
-            'weight' => '',
+            'weight' => 0.0,
             'quantity' => '',
         );
     }
