@@ -79,6 +79,7 @@ class Types {
     public static $FaqType;
     public static $PhotoType;
     public static $PriceType;
+    public static $ProductVariationType;
     public static $PhotoDescriptionType;
     public static $NewsType;
     public static $SiteInfoType;
@@ -2543,6 +2544,33 @@ class Types {
             ]; }
         ]);
 
+        static::$ProductVariationType = new ObjectType ([
+            'name' => 'ProductVariationType',
+            'fields'  => function () { return [
+                'variation_id' => [
+                    'type' => Type::id ()
+                ],
+                'description' => [
+                    'type' => Type::string ()
+                ],
+                'price' => [
+                    'type' => Type::string ()
+                ],
+                'sale_price' => [
+                    'type' => Type::string ()
+                ],
+                'image' => [
+                    'type' => Type::string ()
+                ],
+                'weight' => [
+                    'type' => Type::string ()
+                ],
+                'quantity' => [
+                    'type' => Type::string ()
+                ]
+            ]; }
+        ]);
+
         static::$NewsType = new ObjectType ([
             'name' => 'NewsType',
             'fields'  => function () { return [
@@ -3568,13 +3596,23 @@ class Types {
                     }
                 ],
                 'productVariationPrice' => [
-                    'type' => self::$PriceType,
+                    'type' => self::$ProductVariationType,
                     'args' => [
                         'product_id' => Type::nonNull (Type::id ()),
                         'options' => Type::nonNull (Type::listOf (self::$OrderProductOptionInput))
                     ],
                     'resolve' => function ($root, $args, $ctx) {
-                        return self::$resolvers->RootQueryType_productVariationPrice ($root, $args, $ctx);
+                        return self::$resolvers->RootQueryType_productVariationData ($root, $args, $ctx);
+                    }
+                ],
+                'productVariationData' => [
+                    'type' => self::$ProductVariationType,
+                    'args' => [
+                        'product_id' => Type::nonNull (Type::id ()),
+                        'options' => Type::nonNull (Type::listOf (self::$OrderProductOptionInput))
+                    ],
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->RootQueryType_productVariationData ($root, $args, $ctx);
                     }
                 ],
                 'siteInfo' => [
