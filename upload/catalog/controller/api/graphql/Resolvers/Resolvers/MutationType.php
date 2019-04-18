@@ -127,6 +127,13 @@ trait MutationTypeResolver {
         return $ctx->db->countAffected () > 0;
     }
 
+    public function MutationType_confirmOrder ($root, $args, &$ctx) {
+        // validateOrder ($ctx, $args);
+        $ctx->load->model ('checkout/order');
+        $ctx->model_checkout_order->confirmOrder ($args['order_id'], $args['input']);
+        return $ctx->db->countAffected () > 0;
+    }
+
     public function MutationType_deleteOrder ($root, $args, &$ctx) {
         $ctx->load->model ('checkout/order');
         $ctx->model_checkout_order->deleteOrder ($args['order_id']);
