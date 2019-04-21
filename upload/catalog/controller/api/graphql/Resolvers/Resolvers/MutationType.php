@@ -130,7 +130,7 @@ trait MutationTypeResolver {
     public function MutationType_confirmOrder ($root, $args, &$ctx) {
         // validateOrder ($ctx, $args);
         $ctx->load->model ('checkout/order');
-        $ctx->model_checkout_order->confirmOrder ($args['order_id'], $args['input']);
+        $ctx->model_checkout_order->confirmOrder ($args['order_id'], $args['confirmation']);
         return $ctx->db->countAffected () > 0;
     }
 

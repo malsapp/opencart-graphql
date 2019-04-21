@@ -2989,10 +2989,10 @@ class Types {
             'name' => 'BankTransferConfirmationType',
             'fields'  => function () { return [
                 'text' => [
-                    'type' => Type::nonNull (Type::string ())
+                    'type' => Type::string ()
                 ],
                 'attachment' => [
-                    'type' => Type::nonNull (Type::string ())
+                    'type' => Type::string ()
                 ]
             ]; }
         ]);
@@ -3704,7 +3704,7 @@ class Types {
                     'type' => Type::boolean (),
                     'args' => [
                         'order_id' => Type::nonNull (Type::id ()),
-                        'input' => Type::nonNull (self::$BankTransferConfirmationType)
+                        'confirmation' => Type::nonNull (self::$BankTransferConfirmationType)
                     ],
                     'resolve' => function ($root, $args, $ctx) {
                         return self::$resolvers->MutationType_confirmOrder ($root, $args, $ctx);
