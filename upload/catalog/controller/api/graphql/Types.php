@@ -102,6 +102,7 @@ class Types {
     public static $MutationType;
     public static $MenuItemType;
     public static $schema;
+    public static $BankTransferConfirmationType;
 
     private function __clone () {}
     private function __construct () {
@@ -2984,6 +2985,18 @@ class Types {
             ]; }
         ]);
 
+        static::$BankTransferConfirmationType = new InputObjectType ([
+            'name' => 'BankTransferConfirmationType',
+            'fields'  => function () { return [
+                'text' => [
+                    'type' => Type::string ()
+                ],
+                'attachment' => [
+                    'type' => Type::string ()
+                ]
+            ]; }
+        ]);
+
         static::$RootQueryType = new ObjectType ([
             'name' => 'RootQueryType',
             'fields'  => function () { return [
@@ -3685,6 +3698,16 @@ class Types {
                     ],
                     'resolve' => function ($root, $args, $ctx) {
                         return self::$resolvers->MutationType_editOrder ($root, $args, $ctx);
+                    }
+                ],
+                'confirmOrder' => [
+                    'type' => Type::boolean (),
+                    'args' => [
+                        'order_id' => Type::nonNull (Type::id ()),
+                        'confirmation' => Type::nonNull (self::$BankTransferConfirmationType)
+                    ],
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->MutationType_confirmOrder ($root, $args, $ctx);
                     }
                 ],
                 'deleteOrder' => [
