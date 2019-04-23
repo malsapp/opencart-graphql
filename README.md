@@ -3,6 +3,7 @@ OpenCart GraphQL API
 
 
 ## How to install:
-* Clone the repo using: `git clone https://github.com/malsapp/oc-graphql`.
-* Go to 'oc-graphql/upload/catalog/controller/api/graphql' and install the dependencies using `composer install`.
-* Move the 'upload' folder to the open cart website.
+* Download needed release from [Releases](https://github.com/malsapp/opencart-graphql/releases)
+* Go to admin panel >> Extensions >> Extension Installer
+* Upload the downloaded zip file
+* In case of failure to upload, then install Opencart Quickfix [Opencart Quickfix](https://www.opencart.com/index.php?route=marketplace/extension/info&extension_id=18892) by uploading the XML file in that extension archive.  
