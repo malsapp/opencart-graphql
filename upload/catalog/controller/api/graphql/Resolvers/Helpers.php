@@ -749,6 +749,12 @@ if (!function_exists ('variationData')) {
     }
 }
 
+function startsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+    return (substr($haystack, 0, $length) === $needle);
+}
+
 function mobilySendMessage ($number, $msg) {
 	$url = "www.mobily.ws/api/msgSend.php";
     $applicationType = "68";
