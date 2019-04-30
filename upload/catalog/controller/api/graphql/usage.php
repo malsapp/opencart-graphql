@@ -1,13 +1,7 @@
 <?php
 use GraphQL\GraphQL;
 
-if (file_exists(__DIR__.'/vendor/autoload.php')) {
-	require_once __DIR__.'/vendor/autoload.php';
-} else {
-	exec('composer install -d catalog/controller/api/graphql');
-	require_once __DIR__.'/vendor/autoload.php';
-}
-
+require_once __DIR__.'/vendor/autoload.php';
 require_once __DIR__.'/Resolvers/Helpers.php';
 require_once __DIR__.'/Types.php';
 
