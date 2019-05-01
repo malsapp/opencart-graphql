@@ -5,4 +5,14 @@
 	<version>3.0</version>
 	<author>Shopz.io</author>
 	<link>https://shopz.io/</link>
+	<file path="catalog/controller/startup/session.php">
+        <operation error="log">
+            <search><![CDATA[
+			if (isset($this->request->get['route']) && substr($this->request->get['route'], 0, 4) == 'api/') {
+            ]]></search>
+            <add position="replace"><![CDATA[
+           if (isset($this->request->get['api_token']) && isset($this->request->get['route']) && substr($this->request->get['route'], 0, 4) == 'api/') {
+            ]]></add>
+        </operation>
+	</file>
 </modification>
