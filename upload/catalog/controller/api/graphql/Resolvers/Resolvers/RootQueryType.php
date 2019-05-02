@@ -606,20 +606,19 @@ trait RootQueryTypeResolver {
                 $timeslots[$i]['orders_count'] =0;
             }
 
+            $datevaluechange=getFormattedDate($ctx, $args);
+
             $ctx->load->model ('checkout/holidaydate');
             $holidayDays=$ctx->model_checkout_holidaydate->getHolidaydate();
             
             $ctx->load->model ('checkout/maxorderslot');
-            $orderlist=$ctx->model_checkout_maxorderslot->getorderslist($args['date']);
-            
-            foreach($orderlist as $order) {
+            $orderList=$ctx->model_checkout_maxorderslot->getorderslist($datevaluechange->format('Y-m-d'));
+
+            foreach($orderList as $order) {
                 for($i=0;$i<count($timeslots);$i++){
-                    $haystack=$order['delivery_time'];
+                    $haystack=date("H:i", strtotime(substr($order['delivery_time'],0,8)));
                     $needle=$timeslots[$i]['from_time'];
-                    if(substr($needle,0,1)=="0"){
-                        $needle=substr($needle,1,strlen($needle)-1);
-                    }
-                    if(startswith($haystack, $needle)){
+                    if($haystack == $needle){
                         $timeslots[$i]['orders_count'] +=1;
                         break;
                     }
@@ -633,7 +632,6 @@ trait RootQueryTypeResolver {
                 'date_separator' => $deliverydatetime_format,
                 'time_interval' => $deliverydatetime_timeinterval,
                 'weekHolidayDays' => $weekHolidayDays,
-
                 'timeSlots' => $timeslots,
                 'holidayDays' => $holidayDays
             ];
