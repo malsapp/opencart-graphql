@@ -64,7 +64,7 @@ trait ProductTypeResolver {
     }
 
     public function ProductType_formatted ($number, $ctx) {
-        return $ctx->currency->format ($number);
+        return $ctx->currency->format ($number, $ctx->config->get('config_currency'));
     }
 }
 ?>

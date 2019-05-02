@@ -590,6 +590,55 @@ trait RootQueryTypeResolver {
             'pluginversion' => GQ_PLUGIN_VERSION
         ];
     }
+    
+    public function RootQueryType_deliveryDateTime ($root, $args, &$ctx) {
+        if($ctx->config->get('deliverydatetime_status')==1) {
+            $dateFormat = $ctx->config->get('deliverydatetime_dateformat');
+            $deliverydatetime_max_day = $ctx->config->get('deliverydatetime_max_day');
+            $deliverydatetime_min_day = $ctx->config->get('deliverydatetime_min_day');
+            $deliverydatetime_format = $ctx->config->get('deliverydatetime_format');
+            $deliverydatetime_timeinterval = $ctx->config->get('deliverydatetime_timeinterval');
+            $weekHolidayDays = $ctx->config->get('weekdays_weekdayslist');
+
+            $ctx->load->model ('localisation/shippingdate');
+            $timeslots=$ctx->model_localisation_shippingdate->getShippingdate();
+            for($i=0;$i<count($timeslots);$i++){
+                $timeslots[$i]['orders_count'] =0;
+            }
+
+            $datevaluechange=getFormattedDate($ctx, $args);
+
+            $ctx->load->model ('checkout/holidaydate');
+            $holidayDays=$ctx->model_checkout_holidaydate->getHolidaydate();
+            
+            $ctx->load->model ('checkout/maxorderslot');
+            $orderList=$ctx->model_checkout_maxorderslot->getorderslist($datevaluechange->format('Y-m-d'));
+
+            foreach($orderList as $order) {
+                for($i=0;$i<count($timeslots);$i++){
+                    $haystack=date("H:i", strtotime(substr($order['delivery_time'],0,8)));
+                    $needle=$timeslots[$i]['from_time'];
+                    if($haystack == $needle){
+                        $timeslots[$i]['orders_count'] +=1;
+                        break;
+                    }
+                }
+            }
+
+            $data = [
+                'dateFormat' => $dateFormat,
+                'max_day' => $deliverydatetime_max_day,
+                'min_day' => $deliverydatetime_min_day,
+                'date_separator' => $deliverydatetime_format,
+                'time_interval' => $deliverydatetime_timeinterval,
+                'weekHolidayDays' => $weekHolidayDays,
+                'timeSlots' => $timeslots,
+                'holidayDays' => $holidayDays
+            ];
+            
+            return $data;
+        }
+    }
 
     // public function RootQueryType_photo($root, $args, &$ctx){
     //     $ctx->load->model ('extension/photo_gallery');

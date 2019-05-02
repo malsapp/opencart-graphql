@@ -762,6 +762,37 @@ if (!function_exists ('variationData')) {
     }
 }
 
+function getFormattedDate($ctx, $args){
+    $dateFormat = $ctx->config->get('deliverydatetime_dateformat');
+    $date=(string)$args['date'];
+    $date = str_replace('/', '-',$date);
+    if($dateFormat=="MM-DD-YYYY")
+    {
+        $datevaluechange = date_create_from_format('m-d-Y', $date);
+    }
+    if($dateFormat=="DD-MM-YYYY")
+    {
+        $datevaluechange = date_create_from_format('d-m-Y', $date);
+    }
+    if($dateFormat=="YYYY-MM-DD")
+    {
+        $datevaluechange = date_create_from_format('Y-m-d', $date);
+    }
+    if($dateFormat=="DD/MM/YYYY")
+    {
+        $datevaluechange = date_create_from_format('Y-m-d', $date);
+    }
+    if($dateFormat=="MM/DD/YYYY")
+    {
+        $datevaluechange = date_create_from_format('Y-d-m', $date);
+    }
+    if($dateFormat=="YYYY/MM/DD")
+    {
+        $datevaluechange = date_create_from_format('d-m-Y', $date);
+    }
+    return $datevaluechange;
+}
+
 function mobilySendMessage ($number, $msg) {
 	$url = "www.mobily.ws/api/msgSend.php";
     $applicationType = "68";
