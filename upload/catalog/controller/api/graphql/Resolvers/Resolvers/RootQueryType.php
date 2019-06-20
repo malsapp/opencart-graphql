@@ -7,7 +7,9 @@ trait RootQueryTypeResolver {
 
     public function RootQueryType_product ($root, $args, &$ctx) {
         $ctx->load->model ('catalog/product');
-        return $ctx->model_catalog_product->getProduct ($args['id']);
+        $product = $ctx->model_catalog_product->getProduct ($args['id']);
+        $product['description'] = strip_tags(html_entity_decode($product['description']));
+        return $product;
     }
 
     public function RootQueryType_products ($root, $args, &$ctx) {
@@ -23,8 +25,11 @@ trait RootQueryTypeResolver {
 
         $ctx->load->model ('catalog/product');
         $args['sort'] = in_array($key_mapper[$args['sort']], array_keys($key_mapper)) ? $key_mapper[$args['sort']] : '';
-        return $ctx->model_catalog_product->getProducts ($args);
-    }
+        $products = $ctx->model_catalog_product->getProducts ($args);
+        foreach($products as &$product){
+            $product['description'] = strip_tags(html_entity_decode($product['description']));
+        }
+        return $products;    }
 
     public function RootQueryType_compareProducts ($root, $args, &$ctx) {
         $ctx->load->model ('catalog/product');
@@ -120,7 +125,7 @@ trait RootQueryTypeResolver {
                 return array(
                     'id' => $faq['faq_id'] . ':' . -1,
                     'title' => $faq['title'],
-                    'content' => $faq['description'],
+                    'content' => strip_tags(html_entity_decode($faq['description'])),
                     'date' => $faq['date_added']
                 );
             }
@@ -134,8 +139,8 @@ trait RootQueryTypeResolver {
                 return array(
                     'id' => $news['news_id'] . ':' . -2,
                     'title' => $news['title'],
-                    'content' => $news['description'],
-                    'excerpt' => $news['short_description'],
+                    'content' => strip_tags(html_entity_decode($news['description'])),
+                    'excerpt' => strip_tags(html_entity_decode($news['short_description'])),
                     'date' => $news['date_added']
                 );
             }
@@ -149,7 +154,7 @@ trait RootQueryTypeResolver {
                 return array(
                     'id' => $information['information_id'] . ':' . -3,
                     'title' => $information['title'],
-                    'content' => $information['description']
+                    'content' => strip_tags(html_entity_decode($information['description']))
                 );
             }
         }
@@ -172,7 +177,7 @@ trait RootQueryTypeResolver {
                     return array(
                         'id' => $faq['faq_id'] . ':' . -1,
                         'title' => $faq['title'],
-                        'content' => $faq['description'],
+                        'content' => strip_tags(html_entity_decode($faq['description'])),
                         'date' => $faq['date_added']
                     );
                 }, $faqs)
@@ -191,8 +196,8 @@ trait RootQueryTypeResolver {
                     return array(
                         'id' => $news_item['news_id'] . ':' . -2,
                         'title' => $news_item['title'],
-                        'content' => $news_item['description'],
-                        'excerpt' => $news_item['short_description'],
+                        'content' => strip_tags(html_entity_decode($news_item['description'])),
+                        'excerpt' => strip_tags(html_entity_decode($news_item['short_description'])),
                         'date' => $news_item['date_added']
                     );
                 }, $news)
@@ -210,7 +215,7 @@ trait RootQueryTypeResolver {
                     return array(
                         'id' => $information['information_id'] . ':' . -3,
                         'title' => $information['title'],
-                        'content' => $information['description']
+                        'content' => strip_tags(html_entity_decode($information['description']))
                     );
                 }, $informations)
             );
@@ -590,7 +595,7 @@ trait RootQueryTypeResolver {
             'pluginversion' => GQ_PLUGIN_VERSION
         ];
     }
-    
+
     public function RootQueryType_deliveryDateTime ($root, $args, &$ctx) {
         if($ctx->config->get('deliverydatetime_status')==1) {
             $dateFormat = $ctx->config->get('deliverydatetime_dateformat');
@@ -639,7 +644,7 @@ trait RootQueryTypeResolver {
             return $data;
         }
     }
-
+    
     // public function RootQueryType_photo($root, $args, &$ctx){
     //     $ctx->load->model ('extension/photo_gallery');
     //     return $ctx->model_catalog_faqcategory->getPhoto ($args['id']);
