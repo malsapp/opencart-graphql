@@ -518,7 +518,6 @@ function getPaymentMethods (&$ctx) {
     return $ctx->session->data['shipping_methods'];
 }
 
-
 function getMethods(&$ctx, $methodType)
 {
 	// Methods
@@ -550,15 +549,20 @@ function getMethods(&$ctx, $methodType)
                     $settings = $ctx->model_setting_setting->getSetting("{$methodType}_{$quote['code']}");
                     $detailes=array();
                     if($quote['code']=='bank_transfer'){
-                        $bank_detailes = explode("\r\n",$settings['payment_bank_transfer_bank1']);
-                        $bank=[
-                            'bank_name' => $bank_detailes[0],
-                            'account_name' => $bank_detailes[1],
-                            'account_number' => $bank_detailes[2],
-                            'iban' => $bank_detailes[3],
-                            'bic' => ''                      
-                        ];
-                        $detailes[]=$bank;
+                        $banks=array_filter(array_keys($settings), function($key){
+                            return strstr($key,'payment_bank_transfer_bank');
+                        });
+                        foreach($banks as $bank){
+                            $bank_detailes = explode("\r\n",$settings[$bank]);
+                            $_bank=[
+                                'bank_name' => $bank_detailes[0],
+                                'account_name' => $bank_detailes[1],
+                                'account_number' => $bank_detailes[2],
+                                'iban' => $bank_detailes[3],
+                                'bic' => ''                      
+                            ];
+                            $detailes[]=$_bank;
+                        }
                     }
                     $method_data[$result['code']] = array(
                         'title'      => $quote['title'],
