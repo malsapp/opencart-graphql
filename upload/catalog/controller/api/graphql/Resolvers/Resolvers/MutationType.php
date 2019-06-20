@@ -15,8 +15,6 @@ trait MutationTypeResolver {
         if (!$ctx->customer->isLogged ()) return false;
         $ctx->load->model ('account/address');
         validateAddress ($ctx, $args['input']);
-        // return $ctx->model_account_address->addAddress ($args['input']);
-        // (customer_id , args) from v3 -- 20190409-foly
         return $ctx->model_account_address->addAddress ($ctx->customer->isLogged(),$args['input']);   
     }
 
@@ -115,6 +113,8 @@ trait MutationTypeResolver {
             error_log ("[Option]:\n" . print_r ($option_data, true));
         }
 
+        $data['delivery_date'] = isset($ctx->session->data['delivery_date'])?$ctx->session->data['delivery_date']:'';
+        $data['delivery_time'] = isset($ctx->session->data['delivery_time'])?$ctx->session->data['delivery_time']:'';
 
         // place order.
         $id = $ctx->model_checkout_order->addOrder ($data);
@@ -310,14 +310,14 @@ trait MutationTypeResolver {
             }
         }
 
-	    // Re-apply coupon
-	    if (isset ($ctx->session->data['coupon'])) {
+	// Re-apply coupon
+	if (isset ($ctx->session->data['coupon'])) {
             $ctx->load->model ('extension/total/coupon');
             if (!$ctx->model_extension_total_coupon->getCoupon ($ctx->session->data['coupon'])) {
                 unset ($ctx->session->data['coupon']);
             }
         }
-        // return $ctx->session->getId();
+
         return $ctx->sess;
     }
 
@@ -439,5 +439,10 @@ trait MutationTypeResolver {
         );
     }
 
+    public function MutationType_setOrderDeliveryDateTime ($root, $args, &$ctx) {
+        $ctx->session->data['delivery_date'] = $args['delivery_date'];
+        $ctx->session->data['delivery_time'] = $args['delivery_time'];
+        return true;
+    }
 }
 ?>
