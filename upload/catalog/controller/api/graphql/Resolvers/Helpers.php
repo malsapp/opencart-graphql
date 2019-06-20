@@ -518,78 +518,60 @@ function getPaymentMethods (&$ctx) {
     return $ctx->session->data['shipping_methods'];
 }
 
+
 function getMethods(&$ctx, $methodType)
 {
-    // Totals
-    $totals = array();
-    $taxes = $ctx->cart->getTaxes();
-    $total = 0;
-
-    // Because __call can not keep var references so we put them into an array.
-    $total_data = array(
-        'totals' => &$totals,
-        'taxes'  => &$taxes,
-        'total'  => &$total
-    );
-    
-    $ctx->load->model('extension/extension');
-
-    $sort_order = array();
-
-    $results = $ctx->model_extension_extension->getExtensions('total');
-
-    foreach ($results as $key => $value) {
-        $sort_order[$key] = $ctx->config->get($value['code'] . '_sort_order');
-    }
-
-    array_multisort($sort_order, SORT_ASC, $results);
-
-    foreach ($results as $result) {
-        if ($ctx->config->get($result['code'] . '_status')) {
-            $ctx->load->model('extension/total/' . $result['code']);
-            
-            // We have to put the totals in an array so that they pass by reference.
-            $ctx->{'model_extension_total_' . $result['code']}->getTotal($total_data);
-        }
-    }
-
 	// Methods
 	$method_data = array();
-	$ctx->load->model('extension/extension');
-	$results = $ctx->model_extension_extension->getExtensions($methodType);
+	$ctx->load->model('setting/extension');
+	$results = $ctx->model_setting_extension->getExtensions($methodType);
 	foreach ($results as $result) {
-			if ($ctx->config->get($result['code'] . '_status')) {
-					$ctx->load->model("extension/$methodType/" . $result['code']);
+        if ($ctx->config->get("{$methodType}_{$result['code']}" . '_status')) {
+            $ctx->load->model("extension/$methodType/" . $result['code']);
 
-					if($methodType == 'shipping'){
-						$quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getQuote($ctx->session->data['shipping_address']);
-					}elseif($methodType == 'payment'){
-						$quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getMethod($ctx->session->data['shipping_address'],$total);						
-					}
+            if($methodType == 'shipping'){
+                $quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getQuote($ctx->session->data['shipping_address']);
+            }elseif($methodType == 'payment'){
+                // Totals
+                $totals = getTotals($ctx);
+                $quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getMethod($ctx->session->data['shipping_address'],$totals['total']);						
+            }
 
-					if ($quote) {
-                        if( $methodType == 'shipping' ){
-							$method_data[$result['code']] = array(
-                                'title'      => $quote['title'],
-                                'quote'      => $quote['quote'],
-                                'sort_order' => $quote['sort_order'],
-                                'error'      => isset($quote['error'])?$quote['error']:''
-                            );
-                        } elseif( $methodType == 'payment' ){
-                            // $ctx->load->model('setting/setting');
-                            // $settings = $ctx->model_setting_setting->getSetting($quote['code']);
-							$method_data[$result['code']] = array(
-									'title'      => $quote['title'],
-									'quote'      => [ 
-                                        'code' => $quote['code'],
-                                        // 'details' => json_encode($settings)
-                                    ],
-									'sort_order' => $quote['sort_order'],
-									'error'      => isset($quote['error'])?$quote['error']:''
-                            );
-                        }
-					}
-			}
+            if ($quote) {
+                if( $methodType == 'shipping' ){
+                    $method_data[$result['code']] = array(
+                        'title'      => $quote['title'],
+                        'quote'      => $quote['quote'],
+                        'sort_order' => $quote['sort_order'],
+                        'error'      => isset($quote['error'])?$quote['error']:''
+                    );
+                } elseif( $methodType == 'payment' ){
+                    $ctx->load->model('setting/setting');
+                    $settings = $ctx->model_setting_setting->getSetting("{$methodType}_{$quote['code']}");
+                    $detailes=array();
+                    if($quote['code']=='bank_transfer'){
+                        $bank_detailes = explode("\r\n",$settings['payment_bank_transfer_bank1']);
+                        $bank=[
+                            'bank_name' => $bank_detailes[0],
+                            'account_name' => $bank_detailes[1],
+                            'account_number' => $bank_detailes[2],
+                            'iban' => $bank_detailes[3],
+                            'bic' => ''                      
+                        ];
+                        $detailes[]=$bank;
+                    }
+                    $method_data[$result['code']] = array(
+                        'title'      => $quote['title'],
+                        'quote'      => [ 
+                            'code' => $quote['code'],
+                            'details' => json_encode($detailes)
+                        ],
+                        'sort_order' => $quote['sort_order'],
+                        'error'      => isset($quote['error'])?$quote['error']:''
+                    );
+                }
+            }
+        }
 	}
 
 	$sort_order = array();
