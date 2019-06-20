@@ -402,10 +402,9 @@ function getSession (&$ctx, $session_id) {
 
     $session = new Sess('db',$reg);
     $ctx->session = $session;
-    // $ctx->session = new \Session('db',$reg);
+
     $ctx->session->__destroy ('default');
     $ctx->session->start ($session_id);
-    // $ctx->session->start ('gql', $session_id);
 
     if (!isset ($ctx->session->data)) $ctx->session->data = array();
 
@@ -471,7 +470,7 @@ function getTotals (&$ctx) {
     );
 
     $sort_order = array();
-    
+
     $results = $ctx->model_setting_extension->getExtensions('total');
 
     foreach ($results as $key => $value) {
@@ -481,7 +480,6 @@ function getTotals (&$ctx) {
     array_multisort($sort_order, SORT_ASC, $results);
 
     foreach ($results as $result) {
-        //if ($ctx->config->get($result['code'] . '_status')) {
         if ($ctx->config->get('total_' . $result['code'] . '_status')) {
             $ctx->load->model('extension/total/' . $result['code']);
             // We have to put the totals in an array so that they pass by reference.
@@ -500,49 +498,106 @@ function getTotals (&$ctx) {
     return $total_data;
 }
 
-function getShippingMethods (&$ctx) {
+function getShippingMethods (&$ctx, $type=0) {
     $ctx->load->language('checkout/checkout');
 
     if (isset($ctx->session->data['shipping_address'])) {
-        // Shipping Methods
-        $method_data = array();
+        $ctx->session->data['shipping_methods'] = getMethods($ctx, 'shipping');
+    }
+    
+    return $ctx->session->data['shipping_methods'];
+}
 
-        // $ctx->load->model('extension/extension');
-        $ctx->load->model('setting/extension');
+function getPaymentMethods (&$ctx) {
+    $ctx->load->language('checkout/checkout');
 
-        // $results = $ctx->model_extension_extension->getExtensions('shipping');
-        $results = $ctx->model_setting_extension->getExtensions('shipping');
-
-        foreach ($results as $result) {
-            //if ($ctx->config->get($result['code'] . '_status')) {
-            if ($ctx->config->get('shipping_' .$result['code'] . '_status')) {
-                $ctx->load->model('extension/shipping/' . $result['code']);
-
-                $quote = $ctx->{'model_extension_shipping_' . $result['code']}->getQuote($ctx->session->data['shipping_address']);
-
-                if ($quote) {
-                    $method_data[$result['code']] = array(
-                        'title'      => $quote['title'],
-                        'quote'      => $quote['quote'],
-                        'sort_order' => $quote['sort_order'],
-                        'error'      => $quote['error']
-                    );
-                }
-            }
-        }
-
-        $sort_order = array();
-
-        foreach ($method_data as $key => $value) {
-            $sort_order[$key] = $value['sort_order'];
-        }
-
-        array_multisort($sort_order, SORT_ASC, $method_data);
-
-        $ctx->session->data['shipping_methods'] = $method_data;
+    if (isset($ctx->session->data['shipping_address'])) {
+        $ctx->session->data['shipping_methods'] = getMethods($ctx, 'payment');
     }
 
     return $ctx->session->data['shipping_methods'];
+}
+
+function getMethods(&$ctx, $methodType)
+{
+    // Totals
+    $totals = array();
+    $taxes = $ctx->cart->getTaxes();
+    $total = 0;
+
+    // Because __call can not keep var references so we put them into an array.
+    $total_data = array(
+        'totals' => &$totals,
+        'taxes'  => &$taxes,
+        'total'  => &$total
+    );
+    
+    $ctx->load->model('extension/extension');
+
+    $sort_order = array();
+
+    $results = $ctx->model_extension_extension->getExtensions('total');
+
+    foreach ($results as $key => $value) {
+        $sort_order[$key] = $ctx->config->get($value['code'] . '_sort_order');
+    }
+
+    array_multisort($sort_order, SORT_ASC, $results);
+
+    foreach ($results as $result) {
+        if ($ctx->config->get($result['code'] . '_status')) {
+            $ctx->load->model('extension/total/' . $result['code']);
+            
+            // We have to put the totals in an array so that they pass by reference.
+            $ctx->{'model_extension_total_' . $result['code']}->getTotal($total_data);
+        }
+    }
+
+	// Methods
+	$method_data = array();
+	$ctx->load->model('extension/extension');
+	$results = $ctx->model_extension_extension->getExtensions($methodType);
+	foreach ($results as $result) {
+			if ($ctx->config->get($result['code'] . '_status')) {
+					$ctx->load->model("extension/$methodType/" . $result['code']);
+
+					if($methodType == 'shipping'){
+						$quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getQuote($ctx->session->data['shipping_address']);
+					}elseif($methodType == 'payment'){
+						$quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getMethod($ctx->session->data['shipping_address'],$total);						
+					}
+
+					if ($quote) {
+                        if( $methodType == 'shipping' ){
+							$method_data[$result['code']] = array(
+                                'title'      => $quote['title'],
+                                'quote'      => $quote['quote'],
+                                'sort_order' => $quote['sort_order'],
+                                'error'      => isset($quote['error'])?$quote['error']:''
+                            );
+                        } elseif( $methodType == 'payment' ){
+                            // $ctx->load->model('setting/setting');
+                            // $settings = $ctx->model_setting_setting->getSetting($quote['code']);
+							$method_data[$result['code']] = array(
+									'title'      => $quote['title'],
+									'quote'      => [ 
+                                        'code' => $quote['code'],
+                                        // 'details' => json_encode($settings)
+                                    ],
+									'sort_order' => $quote['sort_order'],
+									'error'      => isset($quote['error'])?$quote['error']:''
+                            );
+                        }
+					}
+			}
+	}
+
+	$sort_order = array();
+	foreach ($method_data as $key => $value) {
+			$sort_order[$key] = $value['sort_order'];
+	}
+	array_multisort($sort_order, SORT_ASC, $method_data);
+	return $method_data;
 }
 
 function forgottenMail (&$ctx, $args) {
@@ -685,7 +740,6 @@ if (!function_exists ('variationData')) {
     function variationData ($args, &$ctx) {
         $product_id = $args['product_id'];
         $options = $args['options'];
-
         $price = 0;
         if (!is_numeric ($product_id)) return null;
         $ctx->load->model ('catalog/product');
@@ -694,7 +748,6 @@ if (!function_exists ('variationData')) {
         if (is_numeric ($product['special']) && (float) $product['special']) {
             $price = $product['special'];
         }
-
         if (!is_array ($options)) return array (
             'variation_id' => '',
             'description' => '',
@@ -705,13 +758,10 @@ if (!function_exists ('variationData')) {
             'weight' => 0.0,
             'quantity' => '',
         );;
-
         $p_options = $ctx->model_catalog_product->getProductOptions($product_id);
-
         $options_price = 0;
         foreach ($options as $option) {
             $option_id = $option['product_option_id'];
-
             foreach ($p_options as $p_options) {
                 if ($option['product_option_id'] == $p_options['product_option_id']) {
                     foreach ($p_options['product_option_value'] as $p_val) {
@@ -720,7 +770,6 @@ if (!function_exists ('variationData')) {
                 }
             }
         }
-
         return array (
             'variation_id' => '',
             'description' => '',
@@ -732,13 +781,11 @@ if (!function_exists ('variationData')) {
             'quantity' => '',
         );
     }
-
     function get_option_data ($option, $p_val) {
         $result = 0;
         $option_val = json_decode($option['value'], true);
         $option_type = $option['type'];
         $p_val_id = $p_val['product_option_value_id'];
-
         if (strtolower ($option_type) != 'checkbox') {
             if ($p_val_id == $option_val) {
                 if ($p_val['price_prefix'] == '+') {
@@ -762,9 +809,7 @@ if (!function_exists ('variationData')) {
     }
 }
 
-function getFormattedDate($ctx, $args){
-    $dateFormat = $ctx->config->get('deliverydatetime_dateformat');
-    $date=(string)$args['date'];
+function getFormattedDate($dateFormat, $date){
     $date = str_replace('/', '-',$date);
     if($dateFormat=="MM-DD-YYYY")
     {
