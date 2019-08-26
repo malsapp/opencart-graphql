@@ -644,7 +644,11 @@ trait RootQueryTypeResolver {
             return $data;
         }
     }
-    
+
+    public function RootQueryType_availableOptions ($root, $args, $ctx) {
+        return [];
+    }
+
     // public function RootQueryType_photo($root, $args, &$ctx){
     //     $ctx->load->model ('extension/photo_gallery');
     //     return $ctx->model_catalog_faqcategory->getPhoto ($args['id']);
