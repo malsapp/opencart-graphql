@@ -1,15 +1,11 @@
 <?php
 namespace GQL;
 
-// require_once __DIR__.'/vendor/autoload.php';
-require_once __DIR__.'/Resolvers/Resolvers.php';
-
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Schema;
-use \Exception;
+use GQL\Resolvers;
 
 class Types {
     private static $types;
@@ -103,9 +99,10 @@ class Types {
     public static $MenuItemType;
     public static $schema;
     public static $BankTransferConfirmationType;
-    public static $DeliveryDateTimeType;
+    public static $DeliveryDateType;
+    public static $ResponseType;
+    public static $ResponseObjectType;
     public static $TimeSlotType;
-    public static $HolidayDayType;
 
     private function __clone () {}
     private function __construct () {
@@ -121,7 +118,10 @@ class Types {
                     'type' => Type::string ()
                 ],
                 'description' => [
-                    'type' => Type::string ()
+                    'type' => Type::string (),
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->ProductType_description ($root, $args, $ctx);
+                    }
                 ],
                 'meta_title' => [
                     'type' => Type::string ()
@@ -566,7 +566,10 @@ class Types {
                     'type' => Type::int ()
                 ],
                 'description' => [
-                    'type' => Type::string ()
+                    'type' => Type::string (),
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->CategoryType_description ($root, $args, $ctx);
+                    }
                 ],
                 'date_added' => [
                     'type' => Type::string ()
@@ -1326,87 +1329,6 @@ class Types {
                 ],
                 'totals' => [
                     'type' => Type::listOf (self::$OrderTotalsInput)
-                ]
-            ]; }
-        ]);
-
-        static::$DeliveryDateTimeType = new ObjectType ([
-            'name' => 'DeliveryDateTimeType',
-            'fields'  => function () { return [
-                'dateFormat' => [
-                    'type' => Type::string ()
-                ],
-                'max_day' => [
-                    'type' => Type::string ()
-                ],
-                'min_day' => [
-                    'type' => Type::string ()
-                ],
-                'date_separator' => [
-                    'type' => Type::string ()
-                ],
-                'time_interval' => [
-                    'type' => Type::string ()
-                ],
-                'weekHolidayDays' => [
-                    'type' => Type::string ()
-                ],
-                'timeSlots' => [
-                    'type' => Type::listOf (self::$TimeSlotType)
-                ],
-                'holidayDays' => [
-                    'type' => Type::listOf (self::$HolidayDayType)
-                ]
-            ]; }
-        ]);
-
-        static::$TimeSlotType = new ObjectType ([
-            'name' => 'TimeSlotType',
-            'fields'  => function () { return [
-                'deliverytime_id' => [
-                    'type' => Type::id ()
-                ],
-                'title' => [
-                    'type' => Type::string ()
-                ],
-                'from_time' => [
-                    'type' => Type::string ()
-                ],
-                'to_time' => [
-                    'type' => Type::string ()
-                ],
-                'max_order' => [
-                    'type' => Type::string ()
-                ],
-                'orders_count' => [
-                    'type' => Type::int ()
-                ],
-                'status' => [
-                    'type' => Type::string ()
-                ]
-            ]; }
-        ]);
-
-        static::$HolidayDayType = new ObjectType ([
-            'name' => 'HolidayDayType',
-            'fields'  => function () { return [
-                'holiday_id' => [
-                    'type' => Type::id ()
-                ],
-                'holiday_name' => [
-                    'type' => Type::string ()
-                ],
-                'holiday_date' => [
-                    'type' => Type::string ()
-                ],
-                'is_recursive' => [
-                    'type' => Type::string ()
-                ],
-                'created_on' => [
-                    'type' => Type::string ()
-                ],
-                'last_edited_on' => [
-                    'type' => Type::string ()
                 ]
             ]; }
         ]);
@@ -2710,6 +2632,39 @@ class Types {
             ]; }
         ]);
 
+        static::$DeliveryDateType = new ObjectType ([
+            'name' => 'DeliveryDateType',
+            'fields'  => function () { return [
+                'date' => [
+                    'type' => Type::string ()
+                ],
+                'dayName' => [
+                    'type' => Type::string ()
+                ],
+                'is_available' => [
+                    'type' => Type::boolean ()
+                ],
+                'timeSlots' => [
+                    'type' => Type::listOf (self::$TimeSlotType)
+                ]
+            ]; }
+        ]);
+
+        static::$TimeSlotType = new ObjectType ([
+            'name' => 'TimeSlotType',
+            'fields'  => function () { return [
+                'from_time' => [
+                    'type' => Type::string ()
+                ],
+                'to_time' => [
+                    'type' => Type::string ()
+                ],
+                'is_available' => [
+                    'type' => Type::boolean ()
+                ]
+            ]; }
+        ]);
+
         static::$ProductInput = new InputObjectType ([
             'name' => 'ProductInput',
             'fields'  => function () { return [
@@ -3083,6 +3038,33 @@ class Types {
                 ],
                 'attachment' => [
                     'type' => Type::string ()
+                ]
+            ]; }
+        ]);
+
+        static::$ResponseObjectType = new ObjectType ([
+            'name' => 'ResponseObjectType',
+            'fields'  => function () { return [
+                'title' => [
+                    'type' => Type::string ()
+                ],
+                'code' => [
+                    'type' => Type::string ()
+                ],
+                'content' => [
+                    'type' => Type::string ()
+                ]
+            ]; }
+        ]);
+
+        static::$ResponseType = new ObjectType ([
+            'name' => 'ResponseType',
+            'fields'  => function () { return [
+                'data' => [
+                    'type' => Type::listOf(self::$ResponseObjectType)
+                ],
+                'errors' => [
+                    'type' => Type::listOf(self::$ResponseObjectType)
                 ]
             ]; }
         ]);
@@ -3727,10 +3709,11 @@ class Types {
                         return self::$resolvers->RootQueryType_siteInfo ($root, $args, $ctx);
                     }
                 ],
-                'deliveryInfo' => [
-                    'type' => self::$DeliveryDateTimeType,
+                'deliverySlots' => [
+                    'type' => Type::listOf (self::$DeliveryDateType),
                     'args' => [
-                        'date' => Type::nonNull (Type::string ())
+                        'from' => Type::nonNull (Type::string ()),
+                        'to' => Type::nonNull (Type::string ())
                     ],
                     'resolve' => function ($root, $args, $ctx) {
                         return self::$resolvers->RootQueryType_deliveryDateTime ($root, $args, $ctx);
@@ -4139,6 +4122,59 @@ class Types {
                     ],
                     'resolve' => function ($root, $args, $ctx) {
                         return self::$resolvers->MutationType_verifyMobileCode ($root, $args, $ctx);
+                    }
+                ],
+                'setDeliveryDateTime' => [
+                    'type' => Type::boolean (),
+                    'args' => [
+                        'delivery_date' => Type::nonNull (Type::string ()),
+                        'delivery_time' => Type::nonNull (Type::string ())
+                    ],
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->MutationType_setOrderDeliveryDateTime ($root, $args, $ctx);
+                    }
+                ],
+                'sendOTP' => [
+                    'type' => self::$ResponseType,
+                    'args' => [
+                        'country_code' => Type::nonNull (Type::string ()),
+                        'phone_number' => Type::nonNull (Type::string ()),
+                        'purpose' =>  Type::string (),
+                        'via' =>  Type::string ()
+                    ],
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->MutationType_sendOTP ($root, $args, $ctx);
+                    }
+                ],
+                'verifyOTP' => [
+                    'type' => Type::boolean (),
+                    'args' => [
+                        'country_code' => Type::nonNull (Type::string ()),
+                        'phone_number' => Type::nonNull (Type::string ()),
+                        'token' => Type::nonNull (Type::string ())
+                    ],
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->MutationType_verifyOTP ($root, $args, $ctx);
+                    }
+                ],
+                'sendForgetPasswordSMS' => [
+                    'type' => self::$ResponseType,
+                    'args' => [
+                        'country_code' => Type::nonNull (Type::string ()),
+                        'phone_number' => Type::nonNull (Type::string ()),
+                    ],
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->MutationType_sendForgetPassword ($root, $args, $ctx);
+                    }
+                ],
+                'loginByMobileNumber' => [
+                    'type' => Type::id (),
+                    'args' => [
+                        'mobile' => Type::nonNull (Type::string ()),
+                        'password' => Type::nonNull (Type::string ())
+                    ],
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->MutationType_loginByMobileNumber ($root, $args, $ctx);
                     }
                 ]
             ]; }
