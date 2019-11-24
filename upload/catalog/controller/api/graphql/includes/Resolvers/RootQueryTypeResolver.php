@@ -488,7 +488,9 @@ trait RootQueryTypeResolver {
     public function RootQueryType_loggedIn ($root, $args, &$ctx) {
         if ($ctx->customer->isLogged ()) {
             $ctx->load->model ('account/customer');
-            return $ctx->model_account_customer->getCustomer ($ctx->customer->getId ());
+            $customer = $ctx->model_account_customer->getCustomer ($ctx->customer->getId ());
+            $customer['approved'] = true;
+            return $customer;
         }
         return null;
     }

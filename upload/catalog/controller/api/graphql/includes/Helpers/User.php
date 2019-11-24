@@ -22,7 +22,7 @@ class User
         // Check if customer has been approved.
         $customer_info = $ctx->model_account_customer->getCustomerByEmail($args['email']);
 
-        if ($customer_info && !$customer_info['approved']) {
+        if ($customer_info && !$customer_info['safe']) {
             throw new \Exception($ctx->language->get('error_approved'));
         }
 

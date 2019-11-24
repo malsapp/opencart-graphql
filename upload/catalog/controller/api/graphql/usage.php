@@ -1,5 +1,5 @@
 <?php
-
+ini_set('session.gc_maxlifetime', 999999999);
 require_once __DIR__.'/vendor/autoload.php';
 
 use GraphQL\GraphQL;

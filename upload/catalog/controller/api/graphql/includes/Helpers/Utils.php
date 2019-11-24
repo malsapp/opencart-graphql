@@ -14,17 +14,12 @@ class Utils
             session_regenerate_id(true);
             $session_id = session_id();
         }
-
-        ini_set('session.gc_maxlifetime', 999999999);
-
-        global $reg;
         $reg = self::getRegistry($ctx);
 
-        $session = new Sess('db');
+        $session = new Sess('db', $reg);
         $ctx->session = $session;
-
-        $ctx->session->destroy('default');
-        $ctx->session->start('gql', $session_id);
+        $session_id = $session_id??'gql';
+        $ctx->session->start($session_id);
 
         if (!isset($ctx->session->data)) $ctx->session->data = array();
 

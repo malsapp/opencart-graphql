@@ -122,7 +122,7 @@ class Cart
 
     public static function getTotals(&$ctx)
     {
-        $ctx->load->model('extension/extension');
+        $ctx->load->model('setting/extension');
 
         $totals = array();
         $taxes = $ctx->cart->getTaxes();
@@ -137,7 +137,7 @@ class Cart
 
         $sort_order = array();
 
-        $results = $ctx->model_extension_extension->getExtensions('total');
+        $results = $ctx->model_setting_extension->getExtensions('total');
 
         foreach ($results as $key => $value) {
             $sort_order[$key] = $ctx->config->get($value['code'] . '_sort_order');
@@ -191,8 +191,8 @@ class Cart
     {
         // Methods
         $method_data = array();
-        $ctx->load->model('extension/extension');
-        $results = $ctx->model_extension_extension->getExtensions($methodType);
+        $ctx->load->model('setting/extension');
+        $results = $ctx->model_setting_extension->getExtensions($methodType);
         foreach ($results as $result) {
             if ($ctx->config->get($result['code'] . '_status')) {
                 $ctx->load->model("extension/$methodType/" . $result['code']);
