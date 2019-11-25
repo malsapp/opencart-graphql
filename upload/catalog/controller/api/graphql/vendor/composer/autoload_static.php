@@ -15,6 +15,7 @@ class ComposerStaticInite58bcabdaeea4b005401dc6b8fb4fbb1
         'G' => 
         array (
             'GraphQL\\' => 8,
+            'GQL\\' => 4,
         ),
     );
 
@@ -22,6 +23,10 @@ class ComposerStaticInite58bcabdaeea4b005401dc6b8fb4fbb1
         'GraphQL\\' => 
         array (
             0 => __DIR__ . '/..' . '/webonyx/graphql-php/src',
+        ),
+        'GQL\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/includes',
         ),
     );
 
