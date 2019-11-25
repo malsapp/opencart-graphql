@@ -5,6 +5,7 @@ require_once __DIR__.'/vendor/autoload.php';
 use GraphQL\GraphQL;
 use GQL\Types;
 use GQL\Helpers\Utils;
+use GQL\Mobile\DBManager;
 
 define ('GQ_INTERNAL_KEY', '__GQ_INTERNAL_KEY__');
 define ('GQ_PLUGIN_VERSION', '1.129');
@@ -33,6 +34,8 @@ class ControllerApiGraphqlUsage extends Controller {
 			if(false){
 			}else{
 				try {
+					DBManager::setCtx($this->registry);
+					
 					// Set a session and send it back.
 					$headers = getallheaders ();
 					if (isset($headers['X-Session-Id'])) {
