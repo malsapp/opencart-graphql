@@ -21,7 +21,7 @@ class ControllerExtensionModuleShopzGraphql extends Controller
 
                 $this->session->data['success'] = $this->language->get('text_success');
 
-                $this->response->redirect($this->url->link('extension/extension', 'token=' . $this->session->data['token'], true));
+                $this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'], true));
             } else {
                 if (count($this->error) > 0) {
                     $data['error']['error_warning'] = $this->language->get('error_warning');
@@ -71,23 +71,23 @@ class ControllerExtensionModuleShopzGraphql extends Controller
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('text_home'),
-            'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true)
+            'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
         );
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('text_extension'),
-            'href' => $this->url->link('extension/extension', 'token=' . $this->session->data['token'], true)
+            'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'], true)
         );
 
 
         $data['breadcrumbs'][] = array(
             'text' => $this->language->get('heading_title'),
-            'href' => $this->url->link('extension/module/shopz_graphql', 'token=' . $this->session->data['token'], true)
+            'href' => $this->url->link('extension/module/shopz_graphql', 'user_token=' . $this->session->data['user_token'], true)
         );
 
-        $data['action'] = $this->url->link('extension/module/shopz_graphql', 'token=' . $this->session->data['token'], true);
+        $data['action'] = $this->url->link('extension/module/shopz_graphql', 'user_token=' . $this->session->data['user_token'], true);
 
-        $data['cancel'] = $this->url->link('extension/extension', 'token=' . $this->session->data['token'], true);
+        $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'], true);
 
         if (isset($this->request->post['mobile_config_mobile_provider'])) {
             $data['mobile_config_mobile_provider'] = $this->request->post['mobile_config_mobile_provider'];
@@ -157,22 +157,22 @@ class ControllerExtensionModuleShopzGraphql extends Controller
         if (!$this->user->hasPermission('modify', 'extension/module/shopz_graphql')) {
             $this->error['error_permission'] = $this->language->get('error_permission');
         }
-        if (!utf8_strlen($this->request->post['mobile_config_mobile_provider'])) {
+        if (utf8_strlen($this->request->post['mobile_config_mobile_provider']) < 3 ) {
             $this->error['mobile_provider'] = $this->language->get('error_mobile_provider');
         }
-        if (!utf8_strlen($this->request->post['mobile_config_mobile_username'])) {
+        if (utf8_strlen($this->request->post['mobile_config_mobile_username']) < 3 ) {
             $this->error['mobile_username'] = $this->language->get('error_mobile_username');
         }
-        if (!utf8_strlen($this->request->post['mobile_config_mobile_password'])) {
+        if (utf8_strlen($this->request->post['mobile_config_mobile_password']) < 3 ) {
             $this->error['mobile_password'] = $this->language->get('error_mobile_password');
         }
-        if (!utf8_strlen($this->request->post['mobile_config_mobile_sendername'])) {
+        if (utf8_strlen($this->request->post['mobile_config_mobile_sendername']) < 3 ) {
             $this->error['mobile_sendername'] = $this->language->get('error_mobile_sendername');
         }
-        if (!utf8_strlen($this->request->post['mobile_config_mobile_message_template_otp'])) {
+        if (utf8_strlen($this->request->post['mobile_config_mobile_message_template_otp']) < 3 ) {
             $this->error['mobile_message_template_otp'] = $this->language->get('error_mobile_message_template_otp');
         }
-        if (!utf8_strlen($this->request->post['mobile_config_mobile_message_template_forgot'])) {
+        if (utf8_strlen($this->request->post['mobile_config_mobile_message_template_forgot']) < 3 ) {
             $this->error['mobile_message_template_forgot'] = $this->language->get('error_mobile_message_template_forgot');
         }
 

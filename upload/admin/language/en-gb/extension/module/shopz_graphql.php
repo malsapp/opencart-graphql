@@ -12,8 +12,8 @@ $_['entry_mobile_provider']		= 'Mobile Provider';
 $_['entry_mobile_username']		= 'Mobile Username';
 $_['entry_mobile_password']      = 'Mobile Password';
 $_['entry_mobile_sendername']      = 'Mobile Sendername';
-$_['entry_mobile_message_template_otp']      = 'Mobile OTP Message Template';
-$_['entry_mobile_message_template_forgot']      = 'Mobile Forgot Password Message Template';
+$_['entry_mobile_message_template_otp']      = 'Mobile OTP Message Template ...SHOPZOTPCODE...';
+$_['entry_mobile_message_template_forgot']      = 'Mobile Forgot Password Message Template ...SHOPZFORGOT...';
 $_['entry_status'] = 'Status';
 
 // Error
