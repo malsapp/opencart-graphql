@@ -219,7 +219,7 @@ class Cart
 
                         if ($quote['code'] == 'bank_transfer') {
                             $keys = array_keys($settings);
-                            $pattern = "bank_transfer_bank";
+                            $pattern = "payment_bank_transfer_bank";
                             $result = preg_grep("/{$pattern}/", $keys);
 
                             foreach ($result as $index => $associative) {
