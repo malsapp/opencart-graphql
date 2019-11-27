@@ -284,6 +284,7 @@ trait MutationTypeResolver {
         User::validateSignup ($args['input'], $ctx);
 
         $customer_id = $ctx->model_account_customer->addCustomer($args['input']);
+        $ctx->db->query("UPDATE " . DB_PREFIX . "customer SET safe=1 WHERE customer_id = " . $customer_id);
         $ctx->model_account_customer->deleteLoginAttempts($args['input']['email']);
         $ctx->customer->login($args['input']['email'], $args['input']['password']);
         return $ctx->sess;
