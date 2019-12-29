@@ -334,12 +334,26 @@ trait RootQueryTypeResolver {
 
     public function RootQueryType_country ($root, $args, &$ctx) {
         $ctx->load->model ('localisation/country');
-        return $ctx->model_localisation_country->getCountry ($args['id']);
+        $country = $ctx->model_localisation_country->getCountry ($args['id']);
+        $country['states'] = $this->getStatesByCountryId($ctx, $country['country_id']);
+        return $country;
     }
 
     public function RootQueryType_countries ($root, $args, &$ctx) {
         $ctx->load->model ('localisation/country');
-        return $ctx->model_localisation_country->getCountries ($args);
+
+        $countries = $ctx->model_localisation_country->getCountries ($args);
+        foreach($countries as &$country)
+        {
+            $country['states'] = $this->getStatesByCountryId($ctx, $country['country_id']);
+        }
+        return $countries;
+    }
+
+    public function RootQueryType_states($root, $args, $ctx)
+    {
+        $country_id = $args['country_id'];
+        return $this->getStatesByCountryId($ctx, $country_id);
     }
 
     public function RootQueryType_currency ($root, $args, &$ctx) {
@@ -690,6 +704,19 @@ trait RootQueryTypeResolver {
 
     public function RootQueryType_availableOptions ($root, $args, $ctx) {
         return null;
+    }
+
+    public function getStatesByCountryId(&$ctx, int $country_id){
+        $ctx->load->model ('localisation/zone');
+        $zones = $ctx->model_localisation_zone->getZonesByCountryId ($country_id);
+        $states = array();
+        foreach ($zones as $zone) {
+            $states[] = [
+                'state_id' => $zone['zone_id'],
+                'name' => $zone['name']
+            ];
+        }
+        return $states;
     }
 
     // public function RootQueryType_photo($root, $args, &$ctx){

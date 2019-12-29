@@ -34,6 +34,7 @@ class Types {
     public static $DownloadType;
     public static $LanguageType;
     public static $CountryType;
+    public static $StateType;
     public static $CurrencyType;
     public static $ZoneType;
     public static $RewardType;
@@ -967,6 +968,9 @@ class Types {
                 'name' => [
                     'type' => Type::string ()
                 ],
+                'states' => [
+                    'type' => Type::listOf (self::$StateType)
+                ],
                 'iso_code_2' => [
                     'type' => Type::string ()
                 ],
@@ -981,6 +985,18 @@ class Types {
                 ],
                 'status' => [
                     'type' => Type::int ()
+                ]
+            ]; }
+        ]);
+
+        static::$StateType = new ObjectType ([
+            'name' => 'StateType',
+            'fields'  => function () { return [
+                'state_id' => [
+                    'type' => Type::id ()
+                ],
+                'name' => [
+                    'type' => Type::string ()
                 ]
             ]; }
         ]);
@@ -3727,6 +3743,15 @@ class Types {
                     ],
                     'resolve' => function ($root, $args, $ctx) {
                         return self::$resolvers->RootQueryType_availableOptions ($root, $args, $ctx);
+                    }
+                ],
+                'states' => [
+                    'type' => Type::listOf (self::$StateType),
+                    'args' => [
+                        'country_id' => Type::nonNull (Type::id ())
+                    ],
+                    'resolve' => function ($root, $args, $ctx) {
+                        return self::$resolvers->RootQueryType_states ($root, $args, $ctx);
                     }
                 ]
             ]; }
