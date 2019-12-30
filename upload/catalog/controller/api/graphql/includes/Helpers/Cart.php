@@ -196,7 +196,7 @@ class Cart
         $ctx->load->model('setting/extension');
         $results = $ctx->model_setting_extension->getExtensions($methodType);
         foreach ($results as $result) {
-            if ($ctx->config->get($result['code'] . '_status')) {
+            if ($ctx->config->get('shipping_'.$result['code'] . '_status')) {
                 $ctx->load->model("extension/$methodType/" . $result['code']);
 
                 if ($methodType == 'shipping') {
