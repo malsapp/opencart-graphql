@@ -78,7 +78,8 @@ class Address
 
             validateAddress($ctx, $args['input']);
             $ctx->load->model('account/address');
-            $ctx->model_account_address->addAddress($args['input']);
+            $customer_id = $ctx->customer->getId();
+            $ctx->model_account_address->addAddress($customer_id, $args['input']);
             if (null !== $ctx->db->getLastId()) {
                 $ctx->session->data[$addressType] = array('address_id' => $ctx->db->getLastId());
                 return true;

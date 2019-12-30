@@ -18,7 +18,8 @@ trait MutationTypeResolver {
         if (!$ctx->customer->isLogged ()) return false;
         $ctx->load->model ('account/address');
         Address::validateAddress ($ctx, $args['input']);
-        return $ctx->model_account_address->addAddress ($args['input']);
+        $customer_id = $ctx->customer->getId();
+        return $ctx->model_account_address->addAddress ($customer_id, $args['input']);
     }
 
     public function MutationType_editAddress ($root, $args, &$ctx) {
