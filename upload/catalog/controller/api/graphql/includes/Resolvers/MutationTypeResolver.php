@@ -323,7 +323,7 @@ trait MutationTypeResolver {
             }
         }
 
-        return $ctx->sess;
+        return $ctx->session->getId();
     }
 
     public function MutationType_logout ($root, $args, &$ctx) {

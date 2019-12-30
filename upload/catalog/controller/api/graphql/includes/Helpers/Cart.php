@@ -40,8 +40,8 @@ class Cart
         foreach ($totals as $total) {
             $res[$total['code']] = $total['value'];
         }
-        if (!$res['coupon']) $res['coupon'] = 0;
-        if (!$res['tax']) $res['tax'] = 0;
+        if (!isset($res['coupon'])) $res['coupon'] = 0;
+        if (!isset($res['tax'])) $res['tax'] = 0;
 
         $coupon = isset($ctx->session->data['coupon']) ? $ctx->session->data['coupon'] : '';
         $taxes = self::calculate_taxes($ctx->cart->getTaxes());
@@ -122,13 +122,14 @@ class Cart
 
     public static function getTotals(&$ctx)
     {
+        // Totals
         $ctx->load->model('setting/extension');
 
         $totals = array();
         $taxes = $ctx->cart->getTaxes();
-        $total = 0;
+        $total = 0;    
 
-        // Because __call can not keep var references so we put them into an array.
+        // Because __call can not keep var references so we put them into an array. 		
         $total_data = array(
             'totals' => &$totals,
             'taxes'  => &$taxes,
@@ -140,14 +141,15 @@ class Cart
         $results = $ctx->model_setting_extension->getExtensions('total');
 
         foreach ($results as $key => $value) {
-            $sort_order[$key] = $ctx->config->get($value['code'] . '_sort_order');
+            $sort_order[$key] = $ctx->config->get('total_' . $value['code'] . '_sort_order');
         }
 
         array_multisort($sort_order, SORT_ASC, $results);
 
         foreach ($results as $result) {
-            if ($ctx->config->get($result['code'] . '_status')) {
+            if ($ctx->config->get('total_' . $result['code'] . '_status')) {
                 $ctx->load->model('extension/total/' . $result['code']);
+
                 // We have to put the totals in an array so that they pass by reference.
                 $ctx->{'model_extension_total_' . $result['code']}->getTotal($total_data);
             }
@@ -161,7 +163,7 @@ class Cart
 
         array_multisort($sort_order, SORT_ASC, $totals);
 
-        return $total_data;
+        return $total_data;        
     }
 
 
