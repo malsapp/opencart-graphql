@@ -196,14 +196,15 @@ class Cart
         $ctx->load->model('setting/extension');
         $results = $ctx->model_setting_extension->getExtensions($methodType);
         foreach ($results as $result) {
-            if ($ctx->config->get('shipping_'.$result['code'] . '_status')) {
+            if ($ctx->config->get("{$methodType}_".$result['code'] . '_status')) {
                 $ctx->load->model("extension/$methodType/" . $result['code']);
 
+                $address = Address::getAddress($ctx, 'shipping_address');
                 if ($methodType == 'shipping') {
-                    $quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getQuote($ctx->session->data['shipping_address']);
+                    $quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getQuote($address);
                 } elseif ($methodType == 'payment') {
                     $totals = self::getTotals($ctx);
-                    $quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getMethod($ctx->session->data['shipping_address'], $totals['total']);
+                    $quote = $ctx->{"model_extension_{$methodType}_" . $result['code']}->getMethod($address, $totals['total']);
                 }
 
                 if ($quote) {
