@@ -6,7 +6,7 @@ OpenCart GraphQL API Plugin
 * Go to admin panel >> Extensions >> Extension Installer
 * Upload the downloaded zip file
 * In case of failure to upload, then install Opencart Quickfix [Opencart Quickfix](https://www.opencart.com/index.php?route=marketplace/extension/info&extension_id=18892) by uploading the XML file included within the extension archive.
-* Setting for mobile provider should be configured in plugin settings the resides in the following path: Extensions >> Modules >> Shopz Graphql.
+* Setting for mobile provider should be configured in plugin settings that resides in the following path: Extensions >> Modules >> Shopz Graphql.
 
 ### API Docs and usage:
 * API endpoint url is: `https://yoursitedomain.tld/index.php?route=api/graphql/usage`
